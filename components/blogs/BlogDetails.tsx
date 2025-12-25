@@ -5,7 +5,7 @@ import Link from "next/link";
 import { ArrowLeft, Calendar, Clock, Twitter, Linkedin, Facebook } from "lucide-react";
 import { Button } from "@/components/ui/button";
 
-const BlogDetails = () => {
+const BlogDetailsComponent = () => {
     // Mock Data
     const post = {
         title: "The Future of React Server Components",
@@ -106,4 +106,4 @@ const BlogDetails = () => {
     );
 };
 
-export default BlogDetails;
+export default BlogDetailsComponent;

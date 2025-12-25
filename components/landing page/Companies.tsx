@@ -92,7 +92,7 @@ const Companies = () => {
                     src='/trstd_prtnrs_logo.jpg'
                     width={32}
                     height={32}
-                    alt="home-grid-logo"
+                    alt="trusted-partners-logo"
                     className={`object-contain ${className}`}
                 />
             ),
