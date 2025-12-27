@@ -206,7 +206,7 @@ const About = () => {
                             Offline Mode
                         </h3>
                         <div className="flex flex-wrap gap-2 mb-4">
-                            {['Movies', 'Gaming', 'Music', 'Reading'].map((hobby) => (
+                            {['Movies', 'Gaming', 'Music', 'Reading', "Forex Trading"].map((hobby) => (
                                 <span key={hobby} className="px-3 py-1 bg-gray-100 rounded-md text-xs font-bold uppercase tracking-wider text-gray-600">
                                     {hobby}
                                 </span>

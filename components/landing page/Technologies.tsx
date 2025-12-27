@@ -23,6 +23,12 @@ const Technologies = () => {
             skills: ["PostgreSQL", "MongoDB", "Redis", "MySQL"]
         },
         {
+            title: "Automation & Web Scrapping",
+            icon: Settings,
+            description: "Auomating manual jobs using scripts.",
+            skills: ["Python", "JavaScript", "Selenium", "Puppeteer", "Beautifulsoup"]
+        },
+        {
             title: "DevOps & Tools",
             icon: Settings,
             description: "Deployment & workflow.",
