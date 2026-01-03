@@ -68,7 +68,7 @@ const About = () => {
                             </h3>
                             <div className="space-y-8">
                                 <div className="group/stat">
-                                    <div className="text-5xl font-extrabold tracking-tight group-hover/stat:text-gray-300 transition-colors">3+</div>
+                                    <div className="text-5xl font-extrabold tracking-tight group-hover/stat:text-gray-300 transition-colors">5+</div>
                                     <div className="text-gray-500 mt-1 font-medium">Years Experience</div>
                                 </div>
                                 <div className="group/stat">
