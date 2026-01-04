@@ -147,7 +147,7 @@ const About = () => {
                                 <div className="w-[calc(100%-4rem)] md:w-[calc(50%-2.5rem)] p-4 rounded-xl bg-gray-50 border border-gray-100 hover:bg-gray-100 transition-colors">
                                     <div className="flex items-center justify-between space-x-2 mb-1">
                                         <div className="font-bold text-gray-900">Frontend Developer</div>
-                                        <time className="font-mono text-xs text-gray-500 bg-white px-2 py-1 rounded border border-gray-200">2023</time>
+                                        <time className="font-mono text-xs text-gray-500 bg-white px-2 py-1 rounded border border-gray-200">2022</time>
                                     </div>
                                     <div className="text-gray-600 text-sm">Collaboarated on different frontend projects for clients, companies and side projects.</div>
                                 </div>
@@ -160,7 +160,7 @@ const About = () => {
                                 <div className="w-[calc(100%-4rem)] md:w-[calc(50%-2.5rem)] p-4 rounded-xl bg-gray-50 border border-gray-100 hover:bg-gray-100 transition-colors">
                                     <div className="flex items-center justify-between space-x-2 mb-1">
                                         <div className="font-bold text-gray-900">Hello World</div>
-                                        <time className="font-mono text-xs text-gray-500 bg-white px-2 py-1 rounded border border-gray-200">2022</time>
+                                        <time className="font-mono text-xs text-gray-500 bg-white px-2 py-1 rounded border border-gray-200">2020</time>
                                     </div>
                                     <div className="text-gray-600 text-sm">Wrote my first line of code. Realized this is my superpower.</div>
                                 </div>
