@@ -195,7 +195,7 @@ export const projects = [
             "Subscription Payments for tthe Eco System (Stripe)"
         ],
         image: "/spurt.png",
-        repoUrl: "https://www.spurtx.tools/",
+        demoUrl: "https://www.spurtx.tools/",
         images: []
     },
     {

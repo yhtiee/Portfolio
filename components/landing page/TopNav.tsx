@@ -8,12 +8,12 @@ import { Briefcase, Code, Mail, FileText, User } from "lucide-react";
 const TopNav = () => {
 
     const menuItems = [
-        { name: 'About', href: '#about', icon: User },
-        { name: 'Technologies', href: '#technologies', icon: Code },
-        { name: 'Companies', href: '#companies', icon: Code },
-        { name: 'Discover', href: '#discover', icon: Briefcase },
-        { name: 'Contact', href: '#contact', icon: Mail },
-        { name: 'Resume', href: '#resume', icon: FileText },
+        { name: 'About', href: '/#about', icon: User },
+        { name: 'Technologies', href: '/#technologies', icon: Code },
+        { name: 'Companies', href: '/#companies', icon: Code },
+        { name: 'Discover', href: '/#discover', icon: Briefcase },
+        { name: 'Contact', href: '/#contact', icon: Mail },
+        { name: 'Resume', href: '/resume', icon: FileText },
     ];
 
     return (

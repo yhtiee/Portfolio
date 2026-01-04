@@ -15,12 +15,12 @@ import Link from "next/link";
 import Image from "next/image";
 
 const menuItems = [
-    { name: 'About', href: '#about', icon: User },
-    { name: 'Technologies', href: '#technologies', icon: Code },
-    { name: 'Companies', href: '#companies', icon: Code },
-    { name: 'Discover', href: '#discover', icon: Briefcase },
-    { name: 'Contact', href: '#contact', icon: Mail },
-    { name: 'Resume', href: '#resume', icon: FileText },
+    { name: 'About', href: '/#about', icon: User },
+    { name: 'Technologies', href: '/#technologies', icon: Code },
+    { name: 'Companies', href: '/#companies', icon: Code },
+    { name: 'Discover', href: '/#discover', icon: Briefcase },
+    { name: 'Contact', href: '/#contact', icon: Mail },
+    { name: 'Resume', href: '/resume', icon: FileText },
 ];
 
 
