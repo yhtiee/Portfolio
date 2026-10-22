@@ -1,8 +1,7 @@
-import type { Metadata } from "next";
+import type { Metadata, Viewport } from "next";
 import { Geist, Geist_Mono } from "next/font/google";
+import { site } from "@/constants/site";
 import "./globals.css";
-import TopNav from "@/components/landing page/TopNav";
-import Contact from "@/components/landing page/Contact";
 
 const geistSans = Geist({
   variable: "--font-geist-sans",
@@ -14,9 +13,32 @@ const geistMono = Geist_Mono({
   subsets: ["latin"],
 });
 
+const title = `${site.name} · Software Engineer`;
+
+// Runs before first paint so a saved dark theme never flashes light (see ThemeToggle).
+const themeScript = `try{if(localStorage.getItem("theme")==="dark")document.documentElement.dataset.theme="dark"}catch(e){}`;
+
 export const metadata: Metadata = {
-  title: "Software Engineer Portfolio",
-  description: "This website showcases my experinces and skills as a software engineer",
+  metadataBase: new URL(site.url),
+  title,
+  description: site.headline,
+  alternates: { canonical: "/" },
+  openGraph: {
+    type: "website",
+    url: "/",
+    title,
+    description: site.headline,
+    siteName: site.name,
+  },
+  twitter: {
+    card: "summary_large_image",
+    title,
+    description: site.headline,
+  },
+};
+
+export const viewport: Viewport = {
+  themeColor: "#ffffff",
 };
 
 export default function RootLayout({
@@ -25,13 +47,12 @@ export default function RootLayout({
   children: React.ReactNode;
 }>) {
   return (
-    <html lang="en">
-      <body
-        className={`${geistSans.variable} ${geistMono.variable} antialiased`}
-      >
-        <TopNav/>
+    <html lang="en" suppressHydrationWarning>
+      <head>
+        <script dangerouslySetInnerHTML={{ __html: themeScript }} />
+      </head>
+      <body className={`${geistSans.variable} ${geistMono.variable} font-sans antialiased`}>
         {children}
-        <Contact/>
       </body>
     </html>
   );

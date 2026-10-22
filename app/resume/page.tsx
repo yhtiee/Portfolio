@@ -1,26 +1,35 @@
-"use client";
-import React from "react";
-import { Button } from "@/components/ui/button";
-import { Download } from "lucide-react";
+import type { Metadata } from "next";
+import Link from "next/link";
+import { ArrowDown, ArrowLeft } from "lucide-react";
 import ResumeDocument from "@/components/resume/Resume";
+import { site } from "@/constants/site";
+
+// Printable resume. scripts/resume-pdf.mjs prints this page to the downloadable PDF,
+// so it carries no site chrome. Visitors use the PDF; this page stays out of search.
+export const metadata: Metadata = {
+    title: `Résumé · ${site.name}`,
+    robots: { index: false },
+    alternates: { canonical: "/" },
+};
 
 export default function ResumePage() {
-
-
     return (
-        <div className="min-h-screen bg-gray-50/50 print:bg-white text-black pt-12 pb-16 px-4 sm:px-6 lg:px-8 font-sans">
-            <div className="max-w-4xl mx-auto mt-14">
-                
-                {/* Header / Actions */}
-                <div className="flex justify-between items-center mb-8 no-print">
-                    <h1 className="text-3xl font-bold tracking-tight text-gray-800">Preview Resume</h1>
-                    <Button className="gap-2 bg-blue-600 text-white hover:bg-blue-700 rounded-lg shadow-md transition-all">
-                        <Download className="w-4 h-4" />
-                        <a href="/Utibeabasi-Ekpenyong-Resume.pdf" download className="font-medium">Download PDF</a>
-                    </Button>
+        <div className="min-h-screen bg-gray-50 print:bg-white print:min-h-0 text-black py-10 px-4 sm:px-6 print:p-0 font-sans">
+            <div className="max-w-4xl mx-auto print:max-w-none">
+                <div className="flex justify-between items-center mb-6 no-print">
+                    <Link href="/" className="inline-flex items-center gap-2 text-sm text-gray-600 hover:text-black transition-colors">
+                        <ArrowLeft className="w-4 h-4" aria-hidden /> Back to site
+                    </Link>
+                    <a
+                        href={site.resumePdf}
+                        download
+                        className="inline-flex items-center gap-2 h-9 px-3 rounded-md bg-black text-white text-sm font-medium hover:opacity-85 transition-opacity"
+                    >
+                        <ArrowDown className="w-4 h-4" aria-hidden /> Download PDF
+                    </a>
                 </div>
 
-                <ResumeDocument/>
+                <ResumeDocument />
             </div>
         </div>
     );
