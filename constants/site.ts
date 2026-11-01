@@ -10,6 +10,9 @@ export const site = {
     roleLine: "Full Stack Engineer",
     headline:
         "Problem solver first, engineer second. I work with clients and teams to understand what success looks like for them, then build the product that gets them there: easy to use, reliable in production and ready to grow with the business.",
+    // Short version of the headline for search results and link previews (~150 characters).
+    description:
+        "Full stack engineer who works with clients and teams to build products that are easy to use, reliable in production and ready to grow.",
     status: "Open to full-time and contract roles",
     location: "Uyo, Akwa Ibom, Nigeria",
     utcOffset: "UTC+1",

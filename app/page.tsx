@@ -11,7 +11,7 @@ const personSchema = {
   url: site.url,
   email: `mailto:${site.email}`,
   jobTitle: "Software Engineer",
-  description: site.headline,
+  description: site.description,
   sameAs: Object.values(site.socials),
   worksFor: experience
     .filter((role) => /present/i.test(role.period ?? ""))

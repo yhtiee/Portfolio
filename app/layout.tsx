@@ -21,19 +21,21 @@ const themeScript = `try{if(localStorage.getItem("theme")==="dark")document.docu
 export const metadata: Metadata = {
   metadataBase: new URL(site.url),
   title,
-  description: site.headline,
+  description: site.description,
   alternates: { canonical: "/" },
   openGraph: {
     type: "website",
     url: "/",
     title,
-    description: site.headline,
+    description: site.description,
     siteName: site.name,
+    locale: "en_US",
   },
   twitter: {
     card: "summary_large_image",
     title,
-    description: site.headline,
+    description: site.description,
+    creator: `@${site.socials.x.split("/").pop()}`,
   },
 };
 
