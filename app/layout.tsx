@@ -13,7 +13,7 @@ const geistMono = Geist_Mono({
   subsets: ["latin"],
 });
 
-const title = `${site.name} · Software Engineer`;
+const title = `${site.name} · ${site.roleLine}`;
 
 // Runs before first paint so a saved dark theme never flashes light (see ThemeToggle).
 const themeScript = `try{if(localStorage.getItem("theme")==="dark")document.documentElement.dataset.theme="dark"}catch(e){}`;

@@ -4,7 +4,7 @@ import { site } from "@/constants/site";
 
 // On paper, roles that ended before this year shrink to their first bullet (no chips)
 // so the PDF stays at 3 pages. The website still shows them in full.
-const COMPACT_BEFORE_YEAR = 2023;
+const COMPACT_BEFORE_YEAR = 2024;
 const isCompactOnPrint = (period?: string) => {
     const end = Number(period?.split(/\s*[-–]\s*/)[1]);
     return Number.isFinite(end) && end > 0 && end < COMPACT_BEFORE_YEAR;

@@ -10,7 +10,7 @@ const personSchema = {
   name: site.name,
   url: site.url,
   email: `mailto:${site.email}`,
-  jobTitle: "Software Engineer",
+  jobTitle: site.roleLine,
   description: site.description,
   sameAs: Object.values(site.socials),
   worksFor: experience

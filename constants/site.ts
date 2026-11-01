@@ -27,10 +27,10 @@ export const site = {
     },
     // Second paragraph under the hero headline: scope, markets and what I'm best at.
     about:
-        "Since 2020 I've shipped for teams in the US, UK, Australia and Nigeria: as Engineering Lead at Home Grid and CvtoCareer, as the backend and infrastructure engineer behind Spurt's product suite, and as the sole engineer on contract builds in fintech, healthcare and AI. I do my best work where product, data and reliability meet: payments and escrow, multi-tenant security, real-time sync, and LLM features with real guardrails.",
+        "I've shipped for teams in the US, UK, Australia and Nigeria: as Engineering Lead at Home Grid and CvtoCareer, as the backend and infrastructure engineer behind Spurt's product suite, and as the sole engineer on contract builds in fintech, healthcare and AI. I do my best work where product, data and reliability meet: payments and escrow, multi-tenant security, real-time sync, and LLM features with real guardrails.",
     // Resume "Professional Summary" (also used for metadata where a longer blurb fits).
     summary:
-        "Full-stack engineer and engineering lead, building professionally since 2020, who takes products from spec to production across web, mobile and backend. As Engineering Lead at Home Grid and CvtoCareer, I led small teams, owned code review and shipped multi-tenant SaaS for US and Australian companies; at Spurt I built OAuth single sign-on that moved 35,325 users across four products and cut releases from 30 minutes to under 5. I work mainly in TypeScript, NestJS, PostgreSQL/Supabase, Next.js and React Native, integrate payments (Stripe, Flutterwave, Plaid) and LLMs (Claude, Gemini) with production guardrails, and use AI coding agents in a spec-first, review-gated workflow.",
+        "Full-stack engineer and engineering lead who takes products from spec to production across web, mobile and backend. As Engineering Lead at Home Grid and CvtoCareer, I led small teams, owned code review and shipped multi-tenant SaaS for US and Australian companies; at Spurt I built OAuth single sign-on that moved 35,325 users across four products and cut releases from 30 minutes to under 5. I work mainly in TypeScript, NestJS, PostgreSQL/Supabase, Next.js and React Native, integrate payments (Stripe, Flutterwave, Plaid) and LLMs (Claude, Gemini) with production guardrails, and use AI coding agents in a spec-first, review-gated workflow.",
 };
 
 /** URL-safe id for a project, used for in-page deep links (/#home-grid-app). */
