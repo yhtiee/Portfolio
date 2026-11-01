@@ -155,7 +155,7 @@ export const experience: Experience[] = [
         companyId: "trusted-partners",
         location: "Riyadh, Saudi Arabia",
         role: "Backend Engineer",
-        period: "2021 - 2022",
+        period: "2022 - 2023",
         points: [
             "Built REST APIs with Django and Flask for client web applications.",
             "Tuned PostgreSQL queries and schemas for client systems."
@@ -167,7 +167,7 @@ export const experience: Experience[] = [
         companyId: "roothub",
         location: "Uyo, Nigeria",
         role: "Full Stack Developer & Tutor",
-        period: "2020 - 2022",
+        period: "2021 - 2022",
         points: [
             "Mentored 50+ students to professional proficiency by designing and delivering a comprehensive Full Stack JavaScript curriculum.",
             "Built an internal learning management system in React that replaced manual HR processes.",
