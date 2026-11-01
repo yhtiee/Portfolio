@@ -1,7 +1,6 @@
 import { ArrowUpRight } from "lucide-react";
 import LocalTime from "@/components/site/LocalTime";
 import ThemeToggle from "@/components/site/ThemeToggle";
-import { projects } from "@/constants/projects";
 import { education, resumeSkillGroups, softSkills } from "@/constants/resume";
 import { site } from "@/constants/site";
 import ContactActions from "./ContactActions";
@@ -10,11 +9,11 @@ import Experience from "./Experience";
 
 const gutter = "mx-auto max-w-[1440px] px-5 md:px-8 xl:px-12";
 
-// Headline numbers for this page. Years is fixed copy (owner's choice), not computed.
-const stats = [
-    { value: "5+", label: "years shipping" },
-    { value: "14", label: "organizations on Home Grid" },
-    { value: String(projects.length), label: "products shipped" },
+// How I work, shown beside the headline in place of numbers (owner's choice).
+const principles = [
+    { title: "Your goals first", detail: "I start from the outcome you need, then choose the tech." },
+    { title: "Great to use", detail: "Clear, fast experiences your users enjoy." },
+    { title: "Built to keep running", detail: "Reliable systems that hold up as you grow." },
 ];
 
 /**
@@ -50,14 +49,14 @@ export default function Home() {
                     <div className="hidden justify-end lg:flex">
                         <ThemeToggle />
                     </div>
-                    <dl className="grid grid-cols-3 border-y border-border">
-                        {stats.map((s, i) => (
-                            <div key={s.label} className={i ? "border-l border-border py-3 pl-4" : "py-3 pr-4"}>
-                                <dt className="sr-only">{s.label}</dt>
-                                <dd>
-                                    <span className="block text-2xl font-semibold tracking-[-0.03em] tabular-nums">{s.value}</span>
-                                    <span className="block text-[12px] leading-tight text-muted-foreground">{s.label}</span>
-                                </dd>
+                    <dl className="grid border-y border-border sm:grid-cols-3">
+                        {principles.map((p, i) => (
+                            <div
+                                key={p.title}
+                                className={i ? "border-t border-border py-3 sm:border-l sm:border-t-0 sm:pl-4" : "py-3 sm:pr-4"}
+                            >
+                                <dt className="text-[14px] font-semibold tracking-[-0.01em]">{p.title}</dt>
+                                <dd className="mt-1 text-[12px] leading-snug text-muted-foreground">{p.detail}</dd>
                             </div>
                         ))}
                     </dl>

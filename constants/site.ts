@@ -9,7 +9,7 @@ export const site = {
     url: "https://ut-software-engineer.vercel.app",
     roleLine: "Full Stack Engineer",
     headline:
-        "I lead teams and ship complete products: web and mobile apps, the APIs and payments behind them, and AI features built for production, from a care-operations platform used by 14 organizations to single sign-on for 35,000+ users across four products.",
+        "Problem solver first, engineer second. I work with clients and teams to understand what success looks like for them, then build the product that gets them there: easy to use, reliable in production and ready to grow with the business.",
     status: "Open to full-time and contract roles",
     location: "Uyo, Akwa Ibom, Nigeria",
     utcOffset: "UTC+1",

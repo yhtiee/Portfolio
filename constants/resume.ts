@@ -156,6 +156,7 @@ export const experience: Experience[] = [
         location: "Riyadh, Saudi Arabia",
         role: "Backend Engineer",
         period: "2022 - 2023",
+        type: "Part-time",
         points: [
             "Built REST APIs with Django and Flask for client web applications.",
             "Tuned PostgreSQL queries and schemas for client systems."
@@ -168,6 +169,7 @@ export const experience: Experience[] = [
         location: "Uyo, Nigeria",
         role: "Full Stack Developer & Tutor",
         period: "2021 - 2022",
+        type: "Full-time",
         points: [
             "Mentored 50+ students to professional proficiency by designing and delivering a comprehensive Full Stack JavaScript curriculum.",
             "Built an internal learning management system in React that replaced manual HR processes.",
