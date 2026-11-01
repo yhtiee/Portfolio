@@ -1,9 +1,4 @@
-import Header from "@/components/site/Header";
-import Hero from "@/components/site/Hero";
-import Work from "@/components/site/Work";
-import Skills from "@/components/site/Skills";
-import Contact from "@/components/site/Contact";
-import ProjectHashSync from "@/components/site/ProjectHashSync";
+import Home from "@/components/home/Home";
 import { companies } from "@/constants/companies";
 import { experience, education, skillGroups } from "@/constants/resume";
 import { site } from "@/constants/site";
@@ -28,17 +23,10 @@ const personSchema = {
   knowsAbout: Array.from(new Set(skillGroups.flatMap((group) => group.items))),
 };
 
-export default function Home() {
+export default function Page() {
   return (
     <>
-      <Header />
-      <main id="main" className="mx-auto max-w-[720px] px-5 md:px-6">
-        <Hero />
-        <Work />
-        <Skills />
-        <Contact />
-      </main>
-      <ProjectHashSync />
+      <Home />
       <script
         type="application/ld+json"
         dangerouslySetInnerHTML={{ __html: JSON.stringify(personSchema).replace(/</g, "\\u003c") }}

@@ -7,18 +7,6 @@ export const Eyebrow = ({ children, className }: { children: React.ReactNode; cl
     <p className={cn("font-mono text-[11px] uppercase tracking-[0.08em] text-subtle", className)}>{children}</p>
 );
 
-export const StatusPill = ({ status }: { status?: string }) =>
-    status ? (
-        <span
-            className={cn(
-                "inline-flex shrink-0 items-center rounded-full border px-2 py-px font-mono text-[10px] uppercase tracking-wide",
-                status.startsWith("Live") ? "border-foreground text-foreground" : "border-border-strong text-muted-foreground"
-            )}
-        >
-            {status}
-        </span>
-    ) : null;
-
 export const ExternalLinks = ({ links, className }: { links: ProjectEntry["links"]; className?: string }) =>
     links.length > 0 ? (
         <div className={cn("flex flex-wrap items-center gap-x-4 gap-y-2 text-sm", className)}>

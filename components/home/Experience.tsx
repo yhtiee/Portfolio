@@ -5,10 +5,10 @@ import Image from "next/image";
 import { ArrowUpRight, ChevronDown, ChevronRight } from "lucide-react";
 import { Sheet, SheetContent, SheetDescription, SheetHeader, SheetTitle } from "@/components/ui/sheet";
 import { cn } from "@/lib/utils";
-import CaseStudy, { Eyebrow, Tags } from "../shared/CaseStudy";
-import type { ProjectEntry } from "../shared/data";
-import { experienceGroups, type ExperienceGroup } from "../shared/groups";
-import { StatusText } from "../shared/TypeTag";
+import CaseStudy, { Eyebrow, Tags } from "./CaseStudy";
+import type { ProjectEntry } from "./data";
+import { experienceGroups, type ExperienceGroup } from "./groups";
+import StatusText from "./StatusText";
 
 // Experience = employment timeline, then contract work (by client), then personal products.
 const employment = experienceGroups.filter((g) => g.kind === "work");
@@ -102,7 +102,7 @@ const SubHead = ({ id, title, count, children }: { id: string; title: string; co
  * Experience: a timeline of employed roles (each holding the projects built there), then
  * contract work grouped by client, then personal products. Case studies open in a side sheet.
  */
-export default function V4Timeline() {
+export default function Experience() {
     const [open, setOpen] = useState<Set<string>>(() => new Set([employment[0].id]));
     const [project, setProject] = useState<{ entry: ProjectEntry; group: ExperienceGroup } | null>(null);
     const [sheetOpen, setSheetOpen] = useState(false);
@@ -202,7 +202,7 @@ export default function V4Timeline() {
         <div className="lg:grid lg:grid-cols-[210px_minmax(0,1fr)] lg:gap-x-10 xl:grid-cols-[230px_minmax(0,1fr)] xl:gap-x-14">
             {/* Desktop navigation column */}
             <aside className="hidden lg:block">
-                <nav aria-label="Experience sections" className="sticky top-8 flex max-h-[calc(100dvh-2rem)] flex-col gap-7 overflow-y-auto py-8">
+                <nav aria-label="Experience sections" className="sticky top-0 flex max-h-dvh flex-col gap-7 overflow-y-auto py-8">
                     <div>
                         <div className="mb-3 flex items-center justify-between">
                             <Eyebrow>Experience</Eyebrow>
@@ -232,7 +232,7 @@ export default function V4Timeline() {
 
             <section id="experience" aria-labelledby="work-heading" className="min-w-0 scroll-mt-20 lg:scroll-mt-12">
                 {/* Mobile/tablet section bar; the active chip follows the scroll position */}
-                <div className="sticky top-8 z-30 -mx-5 border-b border-border bg-background/90 backdrop-blur-md md:-mx-8 lg:hidden">
+                <div className="sticky top-0 z-30 -mx-5 border-b border-border bg-background/90 backdrop-blur-md md:-mx-8 lg:hidden">
                     <nav aria-label="Experience sections" className="flex items-center gap-1.5 overflow-x-auto px-5 py-2 md:px-8">
                         {sections.map((s) => (
                             <Fragment key={s.id}>

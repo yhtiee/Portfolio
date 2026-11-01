@@ -31,5 +31,5 @@ export default async function LegacyProjectPage({ params }: PageProps) {
   );
 
   if (project) permanentRedirect(`/#${projectSlug(project)}`);
-  redirect("/#work");
+  redirect("/#experience");
 }

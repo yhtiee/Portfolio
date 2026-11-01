@@ -4,10 +4,9 @@ import ThemeToggle from "@/components/site/ThemeToggle";
 import { projects } from "@/constants/projects";
 import { education, resumeSkillGroups, softSkills } from "@/constants/resume";
 import { site } from "@/constants/site";
-import ContactActions from "../shared/ContactActions";
-import { period, socialLinks } from "../shared/data";
-import VariantSwitcher from "../shared/VariantSwitcher";
-import V4Timeline from "./V4Timeline";
+import ContactActions from "./ContactActions";
+import { period, socialLinks } from "./data";
+import Experience from "./Experience";
 
 const gutter = "mx-auto max-w-[1440px] px-5 md:px-8 xl:px-12";
 
@@ -19,14 +18,18 @@ const stats = [
 ];
 
 /**
- * V4 · Career timeline.
- * Compact masthead → Experience (employment timeline, contract work, personal) → skills,
- * how I work, contact.
+ * The home page: compact masthead → Experience (employment timeline, contract work,
+ * personal products) → skills and how I work → contact.
  */
-export default function V4Page() {
+export default function Home() {
     return (
         <>
-            <VariantSwitcher current="/v4" className="sticky top-0 z-50" />
+            <a
+                href="#main"
+                className="sr-only focus:not-sr-only focus:absolute focus:left-4 focus:top-3 focus:z-50 focus:rounded-md focus:bg-foreground focus:px-3 focus:py-1.5 focus:text-sm focus:text-background"
+            >
+                Skip to content
+            </a>
 
             <header className={`${gutter} grid gap-8 border-b border-border pb-8 pt-8 md:pt-12 lg:grid-cols-12 lg:gap-12`}>
                 <div className="lg:col-span-7">
@@ -63,7 +66,7 @@ export default function V4Page() {
             </header>
 
             <main id="main" className={`${gutter} [&_li]:text-left [&_p]:text-left [&_p]:hyphens-manual`}>
-                <V4Timeline />
+                <Experience />
 
                 <section aria-label="Skills" className="mt-16 grid gap-10 border-t border-border pt-10 lg:grid-cols-12 lg:gap-12">
                     <div className="lg:col-span-5">

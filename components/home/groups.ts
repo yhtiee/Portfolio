@@ -1,4 +1,4 @@
-// Projects grouped under the experience they came from (used by /v4 and /v5).
+// Projects grouped under the experience they came from (used by the home page).
 //
 // Matching rule: a project's `companyId` (constants/projects.ts) is the company `id`
 // (constants/companies.ts), and the same id is the `companyId` of the role in
@@ -83,14 +83,6 @@ export const experienceGroups: ExperienceGroup[] = [
     ...companyGroups.filter((g) => g.kind === "contract"),
     ...(personal.length ? [personalGroup] : []),
 ];
-
-export const kindOrder: Kind[] = ["work", "contract", "personal"];
-
-export const groupCounts: Record<Kind, number> = {
-    work: experienceGroups.filter((g) => g.kind === "work").length,
-    contract: experienceGroups.filter((g) => g.kind === "contract").length,
-    personal: experienceGroups.filter((g) => g.kind === "personal").length,
-};
 
 // Fail the build if a project is ever left out of the grouping.
 const grouped = experienceGroups.reduce((n, g) => n + g.projects.length, 0);
