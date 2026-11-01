@@ -1,8 +1,8 @@
 "use client";
 
-import { useEffect, useState } from "react";
+import { Fragment, useEffect, useState } from "react";
 import Image from "next/image";
-import { ArrowRight, ArrowUpRight, ChevronDown, ChevronRight } from "lucide-react";
+import { ArrowUpRight, ChevronDown, ChevronRight } from "lucide-react";
 import { Sheet, SheetContent, SheetDescription, SheetHeader, SheetTitle } from "@/components/ui/sheet";
 import { cn } from "@/lib/utils";
 import CaseStudy, { Eyebrow, Tags } from "../shared/CaseStudy";
@@ -10,14 +10,20 @@ import type { ProjectEntry } from "../shared/data";
 import { experienceGroups, type ExperienceGroup } from "../shared/groups";
 import { StatusText } from "../shared/TypeTag";
 
-// The timeline holds employment only; contract and personal work live in their own column.
+// Experience = employment timeline, then contract work (by client), then personal products.
 const employment = experienceGroups.filter((g) => g.kind === "work");
 const contract = experienceGroups.filter((g) => g.kind === "contract");
 const personal = experienceGroups.find((g) => g.kind === "personal");
-const sideProjectCount = contract.reduce((n, g) => n + g.projects.length, 0) + (personal?.projects.length ?? 0);
 
+const CONTRACT_ID = "contract-work";
+const PERSONAL_ID = "personal-work";
 const VISIBLE_POINTS = 2;
-const SIDE_ID = "side-work";
+
+const sections = [
+    { id: "experience", label: "Experience", count: employment.length },
+    { id: CONTRACT_ID, label: "Contract", count: contract.length },
+    ...(personal ? [{ id: PERSONAL_ID, label: "Personal", count: personal.projects.length }] : []),
+];
 
 const bullet = (p: string, i: number) => (
     <li key={i} className="grid grid-cols-[12px_1fr] gap-2 text-[14px] leading-relaxed text-muted-foreground">
@@ -27,7 +33,6 @@ const bullet = (p: string, i: number) => (
 );
 
 const projectCount = (n: number) => (n === 1 ? "1 project" : `${n} projects`);
-
 const shortPeriod = (p?: string) => (p ?? "").replace(/ – Present/, "–now").replace(/(\d{4}) – (\d{4})/, "$1–$2");
 
 /** Real work type from the resume ("Full-time", "Part-time"); nothing when the data has none. */
@@ -51,7 +56,8 @@ const Logo = ({ group, size = 32 }: { group: ExperienceGroup; size?: number }) =
     </span>
 );
 
-function useActiveSection(ids: string[]) {
+/** Which role / sub-section is in the reading band. */
+function useActive(ids: string[]) {
     const [active, setActive] = useState(ids[0]);
     const key = ids.join(",");
     useEffect(() => {
@@ -79,16 +85,30 @@ const findProject = (slug: string) => {
     return null;
 };
 
+/** Sub-section opener: heavy rule, title, count and a short description. */
+const SubHead = ({ id, title, count, children }: { id: string; title: string; count: string; children: React.ReactNode }) => (
+    <div className="border-t-2 border-foreground pt-5">
+        <div className="flex flex-wrap items-baseline justify-between gap-x-4 gap-y-1">
+            <h3 id={`${id}-heading`} className="text-lg font-semibold tracking-[-0.02em] md:text-xl">
+                {title}
+            </h3>
+            <p className="font-mono text-[12px] text-subtle">{count}</p>
+        </div>
+        <p className="mt-1 max-w-[80ch] text-[14px] text-muted-foreground">{children}</p>
+    </div>
+);
+
 /**
- * V4: employment timeline (roles hold the projects built there) beside a separate column of
- * contract work (grouped by client) and personal products. Case studies open in a side sheet.
+ * Experience: a timeline of employed roles (each holding the projects built there), then
+ * contract work grouped by client, then personal products. Case studies open in a side sheet.
  */
 export default function V4Timeline() {
     const [open, setOpen] = useState<Set<string>>(() => new Set([employment[0].id]));
     const [project, setProject] = useState<{ entry: ProjectEntry; group: ExperienceGroup } | null>(null);
     const [sheetOpen, setSheetOpen] = useState(false);
 
-    const active = useActiveSection([...employment.map((g) => g.id), SIDE_ID]);
+    const active = useActive([...employment.map((g) => g.id), CONTRACT_ID, PERSONAL_ID]);
+    const activeSection = active === CONTRACT_ID || active === PERSONAL_ID ? active : "experience";
     const allOpen = employment.every((g) => open.has(g.id));
 
     const openProject = (entry: ProjectEntry, group: ExperienceGroup) => {
@@ -126,20 +146,20 @@ export default function V4Timeline() {
         });
 
     const jump = (id: string) => {
-        if (id !== SIDE_ID) setOpen((prev) => new Set(prev).add(id));
+        if (employment.some((g) => g.id === id)) setOpen((prev) => new Set(prev).add(id));
         requestAnimationFrame(() => document.getElementById(id)?.scrollIntoView({ behavior: "smooth", block: "start" }));
     };
 
     const setAll = () => setOpen(allOpen ? new Set() : new Set(employment.map((g) => g.id)));
 
-    const jumpLink = (id: string, children: React.ReactNode, className?: string) => (
+    const jumpLink = (id: string, children: React.ReactNode, className?: string, current?: boolean) => (
         <a
             href={`#${id}`}
             onClick={(e) => {
                 e.preventDefault();
                 jump(id);
             }}
-            aria-current={active === id ? "true" : undefined}
+            aria-current={current ? "true" : undefined}
             className={className}
         >
             {children}
@@ -150,26 +170,40 @@ export default function V4Timeline() {
         <button
             type="button"
             onClick={() => openProject(entry, group)}
-            className="group/r flex w-full cursor-pointer items-start gap-3 rounded-md py-2 text-left transition-colors hover:bg-muted/60 focus-visible:outline-2 focus-visible:outline-ring"
+            className="group/r flex h-full w-full cursor-pointer items-start gap-3 px-4 py-3 text-left transition-colors hover:bg-muted/60 focus-visible:outline-2 focus-visible:-outline-offset-2 focus-visible:outline-ring"
         >
             <span className="min-w-0 flex-1">
                 <span className="flex flex-wrap items-center gap-x-2.5 gap-y-0.5">
                     <span className="text-[14px] font-medium">{entry.project.title}</span>
                     <StatusText status={entry.project.status} />
                 </span>
-                <span className="mt-0.5 text-[12px] leading-relaxed text-muted-foreground line-clamp-1">{entry.teaser}</span>
-                {meta && <span className="block font-mono text-[11px] text-subtle">{meta}</span>}
+                <span className="mt-0.5 text-[13px] leading-relaxed text-muted-foreground line-clamp-2">{entry.teaser}</span>
+                {meta && <span className="mt-1 block font-mono text-[11px] text-subtle">{meta}</span>}
             </span>
             <ChevronRight className="mt-1 size-4 shrink-0 text-subtle transition-transform group-hover/r:translate-x-0.5 group-hover/r:text-foreground" aria-hidden />
         </button>
     );
 
+    const sideLink = (id: string, label: string, count: string) =>
+        jumpLink(
+            id,
+            <>
+                <span>{label}</span>
+                <span className="shrink-0 font-mono text-[11px] font-normal text-subtle">{count}</span>
+            </>,
+            cn(
+                "-ml-px flex items-center justify-between gap-2 border-l py-1.5 pl-3 text-[13px] transition-colors",
+                active === id ? "border-foreground font-medium text-foreground" : "border-transparent text-muted-foreground hover:text-foreground"
+            ),
+            active === id
+        );
+
     return (
-        <div className="lg:grid lg:grid-cols-[220px_minmax(0,1fr)] lg:gap-x-10 xl:grid-cols-[200px_minmax(0,1fr)_340px] 2xl:grid-cols-[230px_minmax(0,1fr)_400px] 2xl:gap-x-14">
+        <div className="lg:grid lg:grid-cols-[210px_minmax(0,1fr)] lg:gap-x-10 xl:grid-cols-[230px_minmax(0,1fr)] xl:gap-x-14">
             {/* Desktop navigation column */}
             <aside className="hidden lg:block">
-                <div className="sticky top-8 flex max-h-[calc(100dvh-2rem)] flex-col gap-8 overflow-y-auto py-8">
-                    <nav aria-label="Jump to role">
+                <nav aria-label="Experience sections" className="sticky top-8 flex max-h-[calc(100dvh-2rem)] flex-col gap-7 overflow-y-auto py-8">
+                    <div>
                         <div className="mb-3 flex items-center justify-between">
                             <Eyebrow>Experience</Eyebrow>
                             <button
@@ -182,77 +216,61 @@ export default function V4Timeline() {
                         </div>
                         <ol className="space-y-px border-l border-border">
                             {employment.map((g) => (
-                                <li key={g.id}>
-                                    {jumpLink(
-                                        g.id,
-                                        <>
-                                            <span className="truncate">{g.name}</span>
-                                            <span className="shrink-0 font-mono text-[11px] font-normal text-subtle">{shortPeriod(g.period)}</span>
-                                        </>,
-                                        cn(
-                                            "-ml-px flex items-center justify-between gap-2 border-l py-1.5 pl-3 text-[13px] transition-colors",
-                                            active === g.id
-                                                ? "border-foreground font-medium text-foreground"
-                                                : "border-transparent text-muted-foreground hover:text-foreground"
-                                        )
-                                    )}
-                                </li>
+                                <li key={g.id}>{sideLink(g.id, g.name, shortPeriod(g.period))}</li>
                             ))}
                         </ol>
-                    </nav>
-
-                    {jumpLink(
-                        SIDE_ID,
-                        <>
-                            <span>
-                                <span className="block font-medium text-foreground">Contract &amp; personal</span>
-                                <span className="block font-mono text-[11px] text-subtle">
-                                    {contract.length} clients · {personal?.projects.length ?? 0} own products
-                                </span>
-                            </span>
-                            <ArrowRight className="size-4 shrink-0" aria-hidden />
-                        </>,
-                        cn(
-                            "flex items-center justify-between gap-3 rounded-md border px-3 py-2.5 text-[13px] transition-colors hover:border-foreground",
-                            active === SIDE_ID ? "border-foreground" : "border-border"
-                        )
-                    )}
-                </div>
+                    </div>
+                    <div>
+                        <Eyebrow className="mb-3">Also</Eyebrow>
+                        <ul className="space-y-px border-l border-border">
+                            <li>{sideLink(CONTRACT_ID, "Contract work", `${contract.length} clients`)}</li>
+                            {personal && <li>{sideLink(PERSONAL_ID, "Personal", `${personal.projects.length} products`)}</li>}
+                        </ul>
+                    </div>
+                </nav>
             </aside>
 
-            {/* Employment timeline */}
-            <section id="experience" aria-labelledby="work-heading" className="min-w-0 scroll-mt-28 lg:scroll-mt-12">
-                {/* Mobile/tablet section bar */}
+            <section id="experience" aria-labelledby="work-heading" className="min-w-0 scroll-mt-20 lg:scroll-mt-12">
+                {/* Mobile/tablet section bar; the active chip follows the scroll position */}
                 <div className="sticky top-8 z-30 -mx-5 border-b border-border bg-background/90 backdrop-blur-md md:-mx-8 lg:hidden">
-                    <div className="flex items-center gap-1.5 overflow-x-auto px-5 py-2 md:px-8">
-                        <a href="#experience" className="inline-flex h-10 shrink-0 items-center rounded-md border border-foreground px-3 text-[13px] font-medium">
-                            Experience
-                        </a>
-                        <a
-                            href={`#${SIDE_ID}`}
-                            className="inline-flex h-10 shrink-0 items-center gap-1.5 rounded-md border border-border px-3 text-[13px] text-muted-foreground"
-                        >
-                            Contract &amp; personal <span className="font-mono text-[11px] text-subtle">{sideProjectCount}</span>
-                        </a>
+                    <nav aria-label="Experience sections" className="flex items-center gap-1.5 overflow-x-auto px-5 py-2 md:px-8">
+                        {sections.map((s) => (
+                            <Fragment key={s.id}>
+                            {jumpLink(
+                                s.id,
+                                <>
+                                    {s.label} <span className="font-mono text-[11px] text-subtle">{s.count}</span>
+                                </>,
+                                cn(
+                                    "inline-flex h-10 shrink-0 items-center gap-1.5 rounded-md border px-3 text-[13px] transition-colors",
+                                    activeSection === s.id ? "border-foreground font-medium text-foreground" : "border-border text-muted-foreground"
+                                ),
+                                activeSection === s.id
+                            )}
+                            </Fragment>
+                        ))}
+                    </nav>
+                </div>
+
+                <div className="flex flex-wrap items-baseline justify-between gap-x-4 gap-y-1 pb-4 pt-6 lg:pt-8">
+                    <h2 id="work-heading" className="text-xl font-semibold tracking-[-0.02em] md:text-2xl">
+                        Experience
+                    </h2>
+                    <div className="flex items-center gap-4">
+                        <p className="font-mono text-[12px] text-subtle">
+                            {employment.length} roles · {employment.reduce((n, g) => n + g.projects.length, 0)} projects
+                        </p>
                         <button
                             type="button"
                             onClick={setAll}
-                            className="ml-auto inline-flex h-10 shrink-0 cursor-pointer items-center px-2 font-mono text-[12px] text-muted-foreground"
+                            className="min-h-9 cursor-pointer font-mono text-[12px] text-muted-foreground hover:text-foreground lg:hidden"
                         >
                             {allOpen ? "Collapse all" : "Expand all"}
                         </button>
                     </div>
                 </div>
 
-                <div className="flex items-baseline justify-between gap-4 pb-4 pt-6 lg:pt-8">
-                    <h2 id="work-heading" className="text-xl font-semibold tracking-[-0.02em] md:text-2xl">
-                        Experience
-                    </h2>
-                    <p className="font-mono text-[12px] text-subtle">
-                        {employment.length} roles · {employment.reduce((n, g) => n + g.projects.length, 0)} projects
-                    </p>
-                </div>
-
+                {/* Employment timeline */}
                 <ol className="relative border-t border-foreground">
                     {employment.map((g) => {
                         const isOpen = open.has(g.id);
@@ -261,7 +279,7 @@ export default function V4Timeline() {
                             <li
                                 key={g.id}
                                 id={g.id}
-                                className="relative scroll-mt-28 border-b border-border sm:grid sm:grid-cols-[96px_minmax(0,1fr)] sm:gap-x-6 lg:scroll-mt-12"
+                                className="relative scroll-mt-20 border-b border-border sm:grid sm:grid-cols-[96px_minmax(0,1fr)] sm:gap-x-6 lg:scroll-mt-12"
                             >
                                 <div className="relative hidden pt-5 sm:block">
                                     <p className="font-mono text-[12px] leading-5 tabular-nums text-muted-foreground">{g.period}</p>
@@ -289,7 +307,7 @@ export default function V4Timeline() {
                                             </span>
                                             <span className="mt-0.5 block font-mono text-[11px] text-subtle sm:hidden">{g.period}</span>
                                             {!isOpen && (
-                                                <span className="mt-2 text-[13px] text-muted-foreground line-clamp-2">
+                                                <span className="mt-2 text-[13px] text-muted-foreground line-clamp-2 xl:line-clamp-1">
                                                     {g.projects.length > 0 ? (
                                                         <>
                                                             <span className="text-foreground">{g.projects.map((p) => p.project.title).join(" · ")}</span>
@@ -311,14 +329,14 @@ export default function V4Timeline() {
 
                                     <div id={panel} hidden={!isOpen} className="mt-5 space-y-6 sm:pl-11">
                                         <div>
-                                            <ul className="grid gap-y-2">{g.points.slice(0, VISIBLE_POINTS).map(bullet)}</ul>
+                                            <ul className="grid gap-x-10 gap-y-2 xl:grid-cols-2">{g.points.slice(0, VISIBLE_POINTS).map(bullet)}</ul>
                                             {g.points.length > VISIBLE_POINTS && (
                                                 <details className="group/more mt-1">
                                                     <summary className="inline-flex min-h-8 cursor-pointer list-none items-center font-mono text-[12px] text-muted-foreground hover:text-foreground">
                                                         <span className="group-open/more:hidden">+{g.points.length - VISIBLE_POINTS} more highlights</span>
                                                         <span className="hidden group-open/more:inline">Show less</span>
                                                     </summary>
-                                                    <ul className="mt-1 grid gap-y-2">{g.points.slice(VISIBLE_POINTS).map(bullet)}</ul>
+                                                    <ul className="mt-1 grid gap-x-10 gap-y-2 xl:grid-cols-2">{g.points.slice(VISIBLE_POINTS).map(bullet)}</ul>
                                                 </details>
                                             )}
                                         </div>
@@ -326,9 +344,9 @@ export default function V4Timeline() {
                                         {g.projects.length > 0 ? (
                                             <div>
                                                 <Eyebrow className="mb-3">Built here · {g.projects.length}</Eyebrow>
-                                                <ul className="grid gap-px overflow-hidden rounded-lg border border-border bg-border sm:grid-cols-2">
+                                                <ul className={cn("grid border-l border-t border-border sm:grid-cols-2", (g.projects.length === 3 || g.projects.length >= 5) && "xl:grid-cols-3")}>
                                                     {g.projects.map((entry) => (
-                                                        <li key={entry.slug} className="bg-background">
+                                                        <li key={entry.slug} className="border-b border-r border-border">
                                                             <button
                                                                 type="button"
                                                                 onClick={() => openProject(entry, g)}
@@ -355,72 +373,57 @@ export default function V4Timeline() {
                                             <p className="font-mono text-[12px] text-subtle">No public projects listed for this role.</p>
                                         )}
 
-                                        <Tags tags={g.technologies} max={10} />
+                                        <Tags tags={g.technologies} max={12} />
                                     </div>
                                 </div>
                             </li>
                         );
                     })}
                 </ol>
-            </section>
 
-            {/* Contract + personal: its own column on xl, a two-part index under the timeline below that */}
-            <section
-                id={SIDE_ID}
-                aria-labelledby="side-work-heading"
-                className="mt-14 scroll-mt-28 lg:col-start-2 lg:scroll-mt-12 xl:col-start-3 xl:row-start-1 xl:mt-0 xl:pt-8"
-            >
-                <div className="rounded-xl border border-border p-4 md:p-5 xl:border-0 xl:p-0">
-                    <h2 id="side-work-heading" className="text-xl font-semibold tracking-[-0.02em]">
-                        Contract &amp; personal
-                    </h2>
-                    <p className="mt-1 text-[13px] text-muted-foreground">Client builds and my own products, outside the roles in the timeline.</p>
-
-                    <div className="mt-6 grid gap-10 md:grid-cols-2 md:gap-8 xl:grid-cols-1">
-                        <div id="contract-work">
-                            <div className="flex items-baseline justify-between gap-3 border-b border-foreground pb-2">
-                                <h3 className="text-[15px] font-semibold">Contract work</h3>
-                                <span className="font-mono text-[11px] text-subtle">by client · {contract.length}</span>
-                            </div>
-                            <ul className="divide-y divide-border">
-                                {contract.map((g) => (
-                                    <li key={g.id} id={g.id} className="scroll-mt-28 py-3 lg:scroll-mt-12">
-                                        <div className="flex items-center gap-2.5">
-                                            <Logo group={g} size={26} />
-                                            <div className="min-w-0">
-                                                <p className="truncate text-[14px] font-semibold">{g.name}</p>
-                                                <p className="truncate font-mono text-[11px] text-subtle">
-                                                    {[g.role, g.location].filter(Boolean).join(" · ")}
-                                                </p>
-                                            </div>
-                                        </div>
-                                        <ul className="ml-3 mt-1.5 border-l border-border pl-[22px]">
-                                            {g.projects.map((entry) => (
-                                                <li key={entry.slug}>{projectRow(entry, g)}</li>
-                                            ))}
-                                        </ul>
-                                    </li>
-                                ))}
-                            </ul>
-                        </div>
-
-                        {personal && (
-                            <div id="personal-work">
-                                <div className="flex items-baseline justify-between gap-3 border-b border-dashed border-foreground pb-2">
-                                    <h3 className="text-[15px] font-semibold">Personal / independent</h3>
-                                    <span className="font-mono text-[11px] text-subtle">{personal.projects.length} products</span>
+                {/* Contract work, grouped by client */}
+                <div id={CONTRACT_ID} aria-labelledby={`${CONTRACT_ID}-heading`} role="region" className="mt-14 scroll-mt-20 lg:scroll-mt-12">
+                    <SubHead id={CONTRACT_ID} title="Contract work" count={`${contract.length} clients · ${contract.reduce((n, g) => n + g.projects.length, 0)} projects`}>
+                        Products I&apos;ve built for clients on contract, usually as the sole or lead engineer. Grouped by client; the data
+                        has no dates for these engagements.
+                    </SubHead>
+                    <ul className="mt-5 grid border-l border-t border-border md:grid-cols-2 xl:grid-cols-3">
+                        {contract.map((g) => (
+                            <li key={g.id} id={g.id} className="flex flex-col border-b border-r border-border">
+                                <div className="flex items-center gap-2.5 px-4 pt-4">
+                                    <Logo group={g} size={28} />
+                                    <div className="min-w-0">
+                                        <p className="truncate text-[15px] font-semibold">{g.name}</p>
+                                        <p className="truncate font-mono text-[11px] text-subtle">{[g.role, g.location].filter(Boolean).join(" · ")}</p>
+                                    </div>
                                 </div>
-                                <ul className="divide-y divide-border">
-                                    {personal.projects.map((entry) => (
-                                        <li key={entry.slug} className="py-1">
-                                            {projectRow(entry, personal, entry.project.role)}
+                                <ul className="mt-2 flex-1 pb-1">
+                                    {g.projects.map((entry) => (
+                                        <li key={entry.slug} className="ml-[30px] border-l border-border">
+                                            {projectRow(entry, g)}
                                         </li>
                                     ))}
                                 </ul>
-                            </div>
-                        )}
-                    </div>
+                            </li>
+                        ))}
+                    </ul>
                 </div>
+
+                {/* Personal / independent */}
+                {personal && (
+                    <div id={PERSONAL_ID} aria-labelledby={`${PERSONAL_ID}-heading`} role="region" className="mt-14 scroll-mt-20 lg:scroll-mt-12">
+                        <SubHead id={PERSONAL_ID} title="Personal / independent" count={`${personal.projects.length} products`}>
+                            Products I&apos;ve founded or built on my own, mostly open source.
+                        </SubHead>
+                        <ul className="mt-5 grid border-l border-t border-dashed border-border-strong md:grid-cols-2 xl:grid-cols-3">
+                            {personal.projects.map((entry) => (
+                                <li key={entry.slug} className="border-b border-r border-dashed border-border-strong">
+                                    {projectRow(entry, personal, entry.project.role)}
+                                </li>
+                            ))}
+                        </ul>
+                    </div>
+                )}
             </section>
 
             <Sheet open={sheetOpen} onOpenChange={setSheetOpen}>
