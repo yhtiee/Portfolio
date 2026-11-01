@@ -5,11 +5,13 @@ const versions = [
     { href: "/v1", label: "V1", name: "Split rail" },
     { href: "/v2", label: "V2", name: "Bento" },
     { href: "/v3", label: "V3", name: "Editorial" },
+    { href: "/v4", label: "V4", name: "Timeline" },
+    { href: "/v5", label: "V5", name: "Master–detail" },
     { href: "/", label: "Current", name: "site" },
 ];
 
 /** Review-only strip so the owner can flip between the design variants. */
-export default function VariantSwitcher({ current, className }: { current: "/v1" | "/v2" | "/v3"; className?: string }) {
+export default function VariantSwitcher({ current, className }: { current: "/v1" | "/v2" | "/v3" | "/v4" | "/v5"; className?: string }) {
     return (
         <nav
             aria-label="Design variants"
