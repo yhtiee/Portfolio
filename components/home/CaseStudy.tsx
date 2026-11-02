@@ -41,6 +41,16 @@ export const Tags = ({ tags, max, className }: { tags?: string[]; max?: number; 
     );
 };
 
+/** Contributions shown before "Read the full case study". */
+const KEY_POINTS = 3;
+
+const roleItem = (item: string, i: number) => (
+    <li key={i} className="grid grid-cols-[12px_1fr] gap-2 text-[14px] leading-relaxed text-foreground/85">
+        <span className="mt-[0.7em] h-px w-2 bg-subtle" aria-hidden />
+        <span>{item}</span>
+    </li>
+);
+
 /**
  * The full case study for one project. `wide` puts the screenshot and facts in a side
  * column on large screens so an expanded project costs height once, not three times.
@@ -56,6 +66,10 @@ export default function CaseStudy({
     showImage?: boolean;
 }) {
     const { project } = entry;
+    const myRole = project.myRole ?? [];
+    const hasMore = Boolean(
+        project.description || myRole.length > KEY_POINTS || project.challenges?.length || project.challenge || project.solution
+    );
     const grid = {
         wide: "lg:grid-cols-[minmax(0,5fr)_minmax(0,7fr)] lg:gap-10",
         "wide-xl": "xl:grid-cols-[minmax(0,5fr)_minmax(0,7fr)] xl:gap-10",
@@ -98,15 +112,11 @@ export default function CaseStudy({
                 <ExternalLinks links={entry.links} />
             </div>
 
-            {/* Main: story, outcomes, my part, hard problems */}
+            {/* Main: outcomes and my top contributions up front; the full story behind "read more" */}
             <div className="min-w-0 space-y-7">
-                {project.description && (
-                    <p className="max-w-[68ch] text-[15px] leading-[1.65] text-muted-foreground">{project.description}</p>
-                )}
-
                 {project.impact && project.impact.length > 0 && (
                     <div className="space-y-3">
-                        <Eyebrow>Impact</Eyebrow>
+                        <Eyebrow>Results</Eyebrow>
                         <ul className="grid gap-2 sm:grid-cols-2">
                             {project.impact.map((item, i) => (
                                 <li key={i} className="rounded-lg border border-border bg-muted/60 px-3.5 py-3 text-[14px] leading-snug">
@@ -117,48 +127,55 @@ export default function CaseStudy({
                     </div>
                 )}
 
-                {project.myRole && project.myRole.length > 0 && (
+                {myRole.length > 0 && (
                     <div className="space-y-3">
                         <Eyebrow>What I did</Eyebrow>
-                        <ul className="space-y-2">
-                            {project.myRole.map((item, i) => (
-                                <li key={i} className="grid grid-cols-[12px_1fr] gap-2 text-[14px] leading-relaxed text-foreground/85">
-                                    <span className="mt-[0.7em] h-px w-2 bg-subtle" aria-hidden />
-                                    <span>{item}</span>
-                                </li>
-                            ))}
-                        </ul>
+                        <ul className="space-y-2">{myRole.slice(0, KEY_POINTS).map(roleItem)}</ul>
                     </div>
                 )}
 
-                {project.challenges && project.challenges.length > 0 ? (
-                    <div className="space-y-3">
-                        <Eyebrow>Hard problems</Eyebrow>
-                        <div className={cn("grid gap-px overflow-hidden rounded-lg border border-border bg-border", layout === "wide" && "xl:grid-cols-2")}>
-                            {project.challenges.map((item) => (
-                                <div key={item.title} className="space-y-2 bg-background p-4">
-                                    <p className="text-[14px] font-medium">{item.title}</p>
-                                    <p className="text-[13px] leading-relaxed text-muted-foreground">{item.problem}</p>
-                                    <p className="text-[13px] leading-relaxed text-foreground/85">
-                                        <span className="font-mono text-subtle" aria-hidden>
-                                            →{" "}
-                                        </span>
-                                        {item.approach}
-                                    </p>
+                {hasMore && (
+                    <details className="group/more space-y-7 border-t border-border pt-4">
+                        <summary className="inline-flex min-h-8 cursor-pointer list-none items-center font-mono text-[12px] text-muted-foreground hover:text-foreground">
+                            <span className="group-open/more:hidden">Read the full case study</span>
+                            <span className="hidden group-open/more:inline">Show less</span>
+                        </summary>
+                        {project.description && (
+                            <p className="max-w-[68ch] text-[15px] leading-[1.65] text-muted-foreground">{project.description}</p>
+                        )}
+
+                        {myRole.length > KEY_POINTS && <ul className="space-y-2">{myRole.slice(KEY_POINTS).map(roleItem)}</ul>}
+
+                        {project.challenges && project.challenges.length > 0 ? (
+                            <div className="space-y-3">
+                                <Eyebrow>Hard problems</Eyebrow>
+                                <div className={cn("grid gap-px overflow-hidden rounded-lg border border-border bg-border", layout === "wide" && "xl:grid-cols-2")}>
+                                    {project.challenges.map((item) => (
+                                        <div key={item.title} className="space-y-2 bg-background p-4">
+                                            <p className="text-[14px] font-medium">{item.title}</p>
+                                            <p className="text-[13px] leading-relaxed text-muted-foreground">{item.problem}</p>
+                                            <p className="text-[13px] leading-relaxed text-foreground/85">
+                                                <span className="font-mono text-subtle" aria-hidden>
+                                                    →{" "}
+                                                </span>
+                                                {item.approach}
+                                            </p>
+                                        </div>
+                                    ))}
                                 </div>
-                            ))}
-                        </div>
-                    </div>
-                ) : (
-                    (project.challenge || project.solution) && (
-                        <div className="space-y-3">
-                            <Eyebrow>Challenge &amp; approach</Eyebrow>
-                            {project.challenge && <p className="text-[13px] leading-relaxed text-muted-foreground">{project.challenge}</p>}
-                            {project.solution && (
-                                <p className="whitespace-pre-line text-[13px] leading-relaxed text-foreground/85">{project.solution}</p>
-                            )}
-                        </div>
-                    )
+                            </div>
+                        ) : (
+                            (project.challenge || project.solution) && (
+                                <div className="space-y-3">
+                                    <Eyebrow>Challenge &amp; approach</Eyebrow>
+                                    {project.challenge && <p className="text-[13px] leading-relaxed text-muted-foreground">{project.challenge}</p>}
+                                    {project.solution && (
+                                        <p className="whitespace-pre-line text-[13px] leading-relaxed text-foreground/85">{project.solution}</p>
+                                    )}
+                                </div>
+                            )
+                        )}
+                    </details>
                 )}
             </div>
         </div>

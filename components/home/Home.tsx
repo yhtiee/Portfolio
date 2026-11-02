@@ -9,13 +9,6 @@ import Experience from "./Experience";
 
 const gutter = "mx-auto max-w-[1440px] px-5 md:px-8 xl:px-12";
 
-// How I work, shown beside the headline in place of numbers (owner's choice).
-const principles = [
-    { title: "Your goals first", detail: "I start from the outcome you need, then choose the tech." },
-    { title: "Great to use", detail: "Clear, fast experiences your users enjoy." },
-    { title: "Built to keep running", detail: "Reliable systems that hold up as you grow." },
-];
-
 /**
  * The home page: compact masthead → Experience (employment timeline, contract work,
  * personal products) → skills and how I work → contact.
@@ -50,13 +43,13 @@ export default function Home() {
                         <ThemeToggle />
                     </div>
                     <dl className="grid border-y border-border sm:grid-cols-3">
-                        {principles.map((p, i) => (
+                        {site.proof.map((p, i) => (
                             <div
-                                key={p.title}
-                                className={i ? "border-t border-border py-3 sm:border-l sm:border-t-0 sm:pl-4" : "py-3 sm:pr-4"}
+                                key={p.label}
+                                className={i ? "flex flex-col-reverse justify-end border-t border-border py-3 sm:border-l sm:border-t-0 sm:pl-4" : "flex flex-col-reverse justify-end py-3 sm:pr-4"}
                             >
-                                <dt className="text-[14px] font-semibold tracking-[-0.01em]">{p.title}</dt>
-                                <dd className="mt-1 text-[12px] leading-snug text-muted-foreground">{p.detail}</dd>
+                                <dt className="mt-1 text-[12px] leading-snug text-muted-foreground">{p.label}</dt>
+                                <dd className="text-[18px] font-semibold tabular-nums tracking-[-0.02em]">{p.value}</dd>
                             </div>
                         ))}
                     </dl>

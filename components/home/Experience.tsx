@@ -2,8 +2,8 @@
 
 import { Fragment, useEffect, useState } from "react";
 import Image from "next/image";
-import { ArrowUpRight, ChevronDown, ChevronRight } from "lucide-react";
-import { Sheet, SheetContent, SheetDescription, SheetHeader, SheetTitle } from "@/components/ui/sheet";
+import { ArrowUpRight, ChevronDown, ChevronRight, X } from "lucide-react";
+import { Sheet, SheetClose, SheetContent, SheetDescription, SheetHeader, SheetTitle } from "@/components/ui/sheet";
 import { cn } from "@/lib/utils";
 import CaseStudy, { Eyebrow, Tags } from "./CaseStudy";
 import type { ProjectEntry } from "./data";
@@ -17,7 +17,7 @@ const personal = experienceGroups.find((g) => g.kind === "personal");
 
 const CONTRACT_ID = "contract-work";
 const PERSONAL_ID = "personal-work";
-const VISIBLE_POINTS = 2;
+const VISIBLE_POINTS = 3;
 
 const sections = [
     { id: "experience", label: "Experience", count: employment.length },
@@ -178,6 +178,7 @@ export default function Experience() {
                     <StatusText status={entry.project.status} />
                 </span>
                 <span className="mt-0.5 text-[13px] leading-relaxed text-muted-foreground line-clamp-2">{entry.teaser}</span>
+                {entry.result && <span className="mt-1 block text-[13px] font-medium leading-snug">{entry.result}</span>}
                 {meta && <span className="mt-1 block font-mono text-[11px] text-subtle">{meta}</span>}
             </span>
             <ChevronRight className="mt-1 size-4 shrink-0 text-subtle transition-transform group-hover/r:translate-x-0.5 group-hover/r:text-foreground" aria-hidden />
@@ -361,6 +362,7 @@ export default function Experience() {
                                                                 </span>
                                                                 <StatusText status={entry.project.status} />
                                                                 <span className="text-[13px] leading-relaxed text-muted-foreground line-clamp-2">{entry.teaser}</span>
+                                                                {entry.result && <span className="text-[13px] font-medium leading-snug">{entry.result}</span>}
                                                                 <span className="mt-auto pt-1 font-mono text-[11px] text-subtle">
                                                                     {entry.project.tags?.slice(0, 3).join(", ")}
                                                                 </span>
@@ -427,10 +429,15 @@ export default function Experience() {
             </section>
 
             <Sheet open={sheetOpen} onOpenChange={setSheetOpen}>
-                <SheetContent side="right" className="w-full gap-0 overflow-y-auto sm:max-w-xl xl:max-w-3xl">
+                <SheetContent side="right" showCloseButton={false} className="w-full gap-0 overflow-y-auto sm:max-w-xl xl:max-w-3xl">
                     {project && (
                         <>
-                            <SheetHeader className="sticky top-0 z-10 border-b border-border bg-background/90 px-5 py-4 backdrop-blur-md md:px-6">
+                            <SheetHeader className="sticky top-0 z-10 border-b border-border bg-background/90 py-4 pl-5 pr-16 backdrop-blur-md md:pl-6">
+                                {/* Lives in the sticky header so it stays reachable while scrolling; on phones the sheet is full width with no backdrop to tap. */}
+                                <SheetClose className="absolute right-3 top-3 flex size-10 cursor-pointer items-center justify-center rounded-md border border-border bg-background text-muted-foreground transition-colors hover:border-border-strong hover:text-foreground focus-visible:outline-2 focus-visible:outline-ring md:right-4">
+                                    <X className="size-5" aria-hidden />
+                                    <span className="sr-only">Close</span>
+                                </SheetClose>
                                 <p className="flex flex-wrap items-center gap-2 pr-8 font-mono text-[11px] uppercase tracking-[0.06em] text-muted-foreground">
                                     {project.group.kind === "work" && (
                                         <>

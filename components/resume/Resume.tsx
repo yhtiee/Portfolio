@@ -2,14 +2,6 @@ import { Mail, Github, Linkedin, MapPin, Globe } from "lucide-react";
 import { education, experience, resumeSkillGroups } from "@/constants/resume";
 import { site } from "@/constants/site";
 
-// On paper, roles that ended before this year shrink to their first bullet (no chips)
-// so the PDF stays at 3 pages. The website still shows them in full.
-const COMPACT_BEFORE_YEAR = 2024;
-const isCompactOnPrint = (period?: string) => {
-    const end = Number(period?.split(/\s*[-–]\s*/)[1]);
-    return Number.isFinite(end) && end > 0 && end < COMPACT_BEFORE_YEAR;
-};
-
 export default function ResumeDocument() {
   return (
     <div id="resume-content" className="bg-white border border-gray-200 shadow-xl p-8 md:p-12 rounded-lg print:border-0 print:shadow-none print:p-0">
@@ -71,22 +63,26 @@ export default function ResumeDocument() {
                     <div key={index}>
                         <div className="break-inside-avoid print:after:block print:after:h-20 print:after:-mb-20 print:after:content-['']">
                         <div className="flex justify-between items-baseline mb-1">
-                            <h3 className="text-base font-bold text-gray-900">{job.role}</h3>
+                            <h3 className="text-base font-bold text-gray-900">
+                                {job.role}
+                                {/* Contract roles are one bullet each, so role and client share a line. */}
+                                {job.contract && <span className="text-sm text-gray-600"> · {job.company}</span>}
+                            </h3>
                             {(job.period || job.type) && (
                                 <span className="text-[13px] font-semibold text-gray-500 italic pr-1 shrink-0 whitespace-nowrap">
                                     {[job.period, job.type].filter(Boolean).join(" · ")}
                                 </span>
                             )}
                         </div>
-                        <div className="text-sm font-bold text-gray-600 mb-3">{job.company}</div>
+                        {!job.contract && <div className="text-sm font-bold text-gray-600 mb-3 print:mb-2">{job.company}</div>}
                         </div>
-                        <ul className="list-disc list-outside ml-4 space-y-1.5 print:space-y-1 mb-4 print:mb-3">
+                        <ul className={`list-disc list-outside ml-4 space-y-1.5 print:space-y-1 ${job.contract ? "mb-2 print:mb-0" : "mb-4 print:mb-3"}`}>
                             {job.points.map((point, i) => (
-                                <li key={i} className={`text-[13px] print:text-[12px] text-gray-700 leading-snug print:leading-[1.38] pl-1 break-inside-avoid ${i > 0 && (job.contract || isCompactOnPrint(job.period)) ? "print:hidden" : ""}`}>{point}</li>
+                                <li key={i} className={`text-[13px] print:text-[12px] text-gray-700 leading-snug print:leading-[1.38] pl-1 break-inside-avoid`}>{point}</li>
                             ))}
                         </ul>
-                        {/* Contract and older roles skip the chips on paper to keep the PDF at 3 pages. */}
-                        <div className={`flex flex-wrap gap-1.5 break-inside-avoid ${job.contract || isCompactOnPrint(job.period) ? "print:hidden" : ""}`}>
+                        {/* Chips are skipped on paper: the Technical Skills section carries the keywords. */}
+                        <div className="flex flex-wrap gap-1.5 break-inside-avoid print:hidden">
                             {job.technologies.map((tech, i) => (
                                 <span key={i} className="text-[10px] uppercase tracking-wider px-2 py-0.5 bg-gray-100 font-bold text-gray-600 rounded print:bg-white print:border print:border-gray-200">{tech}</span>
                             ))}

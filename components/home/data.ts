@@ -14,6 +14,8 @@ export interface ProjectEntry {
     /** Display year, e.g. "2025 – Now", "2023", or "" when the data has no period. */
     year: string;
     teaser: string;
+    /** Headline outcome for cards: the first impact line, when the project has one. */
+    result?: string;
     links: { label: string; href: string }[];
 }
 
@@ -29,6 +31,7 @@ const toEntry = (project: Project, kind: Kind, company?: Company): ProjectEntry 
     company,
     year: shortPeriod(project.period),
     teaser: firstSentence(project.subtitle || project.description),
+    result: project.impact?.[0],
     links: [
         ...(project.demoUrl ? [{ label: "Live site", href: project.demoUrl }] : []),
         ...(project.repoUrl ? [{ label: "Code", href: project.repoUrl }] : []),

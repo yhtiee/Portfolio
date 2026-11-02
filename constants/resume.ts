@@ -32,13 +32,11 @@ export const experience: Experience[] = [
         period: "2025 - Present",
         type: "Full-time",
         points: [
-            "Led a team of 3 full-stack engineers across Home Grid, a multi-tenant healthcare-operations PWA (React/Vite, NestJS 11, Supabase Postgres), and its sister marketplace CareMatch; 14 organizations onboarded (10 active, 5 on paid plans); top contributor in both repos and reviewer of the team's pull requests (all 112 on CareMatch).",
-            "Architected a compliance-grade document vault with PDF templates and e-signatures (pdf-lib), per-document audit trails, and time-boxed external auditor access with MFA, view-only and watermark rules, revoked automatically every night.",
-            "Built AI-assisted staff scheduling on Gemini 2.5 Flash that encodes working-hour, rest-period, location and job-role rules, runs as a background job with timeouts, and routes every result through manager review, cutting schedule creation from about a day to 20 minutes; paired with geofenced clock-in and a live attendance feed.",
-            "Designed layered access control (Supabase JWT guard → role guard → 40+ per-module permission flags) and four-tier Stripe subscription entitlements, enforced on both the API and the client.",
-            "Set up the GitHub Actions CI/CD pipeline shipping Dockerized staging and production builds to AWS EC2, plus about a dozen scheduled jobs for billing, expiry tracking, reminders and Google Calendar sync.",
-                        "Built CareMatch, a Texas child-welfare hiring marketplace (NestJS, Next.js, PostgreSQL) now used by 10 facilities with 20 job posts, including Stripe Checkout fees for each job posting with idempotent webhook publishing, automatic takedown on refund, scheduled expiry and PDF receipts.",
-            "Integrated CareMatch as a paid Home Grid add-on using single-use, 60-second SSO tokens and HMAC-signed entitlement webhooks, and routed both products' events through Home Grid's single Stripe webhook."
+            "Led a 3-engineer team building Home Grid, a multi-tenant healthcare-operations platform, and its sister marketplace CareMatch: 14 organizations onboarded, 5 on paid plans.",
+            "Cut staff schedule creation from about a day to 20 minutes with AI-assisted scheduling (Gemini) that enforces labor rules and keeps managers in the approval loop.",
+            "Launched CareMatch, a Texas child-welfare hiring marketplace now used by 10 facilities, with Stripe pay-to-post billing and single sign-on as a paid Home Grid add-on.",
+            "Built the compliance document vault (e-signatures, audit trails, time-limited auditor access) and role-based access with four Stripe subscription tiers.",
+            "Set up CI/CD (GitHub Actions, Docker) shipping staging and production to AWS EC2."
         ],
         technologies: ["TypeScript", "React", "Next.js", "Vite", "NestJS", "Supabase", "PostgreSQL", "Google Gemini", "Stripe", "Docker", "AWS EC2"]
     },
@@ -50,12 +48,11 @@ export const experience: Experience[] = [
         period: "2024 - 2026",
         type: "Full-time",
         points: [
-            "Built the OAuth 2.0 single sign-on endpoints in the NestJS/Prisma SpurtX core, with Google and Microsoft sign-in, used by four products (Sync, Score, Toolkit and the SpurtX hub), and migrated 35,325 legacy users onto it.",
-            "Owned the Sync backend (NestJS, PostgreSQL), used by 10+ teams across 50+ projects, from late 2024, writing about 88% of its commits: AI task generation with Gemini, Stripe subscriptions, Fincra wallets, Google and Outlook Calendar sync, and a 39-event notification catalog across email, push and WhatsApp.",
-            "Founded Score, the NestJS successor to Spurt's PHP product Core, now serving 10+ businesses, and was its only engineer for six months, building invoicing, client OTP verification, bookings with Google Calendar and Meet, and cron-driven recurring invoices on dual Postgres connections shared with the SpurtX SSO.",
-            "Built a MongoDB-backed analytics warehouse with scheduled rollups for active users, churn, cohort retention, time to first value, feature adoption and NPS, feeding the admin dashboard.",
-            "Secured the platform: fixed Sync's penetration-test findings, tied admin APIs in four services to a central permission matrix with a global guard that refuses unchecked routes and automatic audit logs, and added rate-limited emailed 2FA for admins backed by Redis.",
-            "Owned Docker and GitHub Actions deploys to AWS (EC2, ECR/ECS with commit-tagged images) across the SpurtX services, cutting releases from ~30-minute manual deploys to under 5 minutes, plus Grafana Loki logging that never blocks requests and the company's logging policy."
+            "Built OAuth 2.0 single sign-on shared by four SpurtX products and migrated 35,325 existing users onto it.",
+            "Cut releases from ~30-minute manual deploys to under 5 minutes by moving SpurtX services to Docker and GitHub Actions on AWS (ECR/ECS, EC2).",
+            "Owned the backend of Sync, a project-management product used by 10+ teams across 50+ projects, adding AI task generation, Stripe subscriptions and calendar sync.",
+            "Founded Score, the NestJS rebuild of Spurt's PHP invoicing and bookings product, as its only engineer for six months; it now serves 10+ businesses.",
+            "Closed penetration-test findings and moved admin APIs in four services behind one central permission system with audit logs and admin 2FA."
         ],
         technologies: ["TypeScript", "NestJS", "Prisma", "TypeORM", "PostgreSQL", "MongoDB", "Redis", "Python", "Flask", "Docker", "GitHub Actions", "AWS", "Grafana Loki"]
     },
@@ -66,9 +63,7 @@ export const experience: Experience[] = [
         role: "Frontend & Mobile Engineer",
         contract: true,
         points: [
-            "Shipped live goal savings in the Bucks React Native app (React Query, idempotency-keyed withdrawals) and built the locked and group savings flows ahead of their APIs.",
-            "Shipped live airtime and data purchases and Face ID / fingerprint payment approval; built cable, electricity and internet flows ready for their APIs.",
-            "Built realtime in-app support chat on Socket.IO, including a pre-login support flow and a transaction-dispute flow, plus PDF statement download and sharing."
+            "Shipped savings, airtime and data purchases, biometric payment approval and realtime support chat in a live React Native banking app."
         ],
         technologies: ["React Native", "Expo", "TypeScript", "React Query", "Socket.IO", "Axios", "EAS", "Next.js", "Tailwind CSS"]
     },
@@ -79,9 +74,7 @@ export const experience: Experience[] = [
         role: "Full Stack Engineer",
         contract: true,
         points: [
-            "Built the admin console and company job management for an AI-vetted talent marketplace on Next.js Server Actions and Supabase with Row Level Security.",
-            "Built screen recording for 30-minute AI interviews that streams to S3 by multipart upload during the session, so finishing takes seconds.",
-            "Added voice-activity detection, pause/resume and send-once outcome emails to the AI interview, guarded by Row Level Security."
+            "Built the admin console, company job management and live recording of 30-minute AI interviews for a UK talent marketplace now live with 3 companies."
         ],
         technologies: ["Next.js", "TypeScript", "Supabase", "PostgreSQL", "AWS S3", "TanStack Query", "Resend", "Tailwind CSS"]
     },
@@ -92,7 +85,7 @@ export const experience: Experience[] = [
         role: "Full Stack Engineer",
         contract: true,
         points: [
-            "Built Me&u, a couples app, end to end in 8 weeks: Expo/React Native client, Supabase backend (30 migrations, RLS), five Edge Functions, a streaming Gemini AI coach and push notifications."
+            "Delivered Me&u, a couples app with a streaming AI coach, end to end in 8 weeks: React Native app, Supabase backend and website."
         ],
         technologies: ["React Native", "Expo", "TypeScript", "Supabase", "PostgreSQL", "Gemini API", "Firebase Cloud Messaging", "Vite"]
     },
@@ -103,7 +96,7 @@ export const experience: Experience[] = [
         role: "Full Stack Engineer",
         contract: true,
         points: [
-            "Built Church Life, a multi-parish Catholic app, end to end in 8 weeks in Expo/React Native on Supabase, with RLS tenancy, Edge Functions for AI Q&A and push, and in-app account deletion."
+            "Delivered Church Life, a multi-parish Catholic app, end to end in 8 weeks, with per-parish data isolation and an AI Q&A assistant."
         ],
         technologies: ["React Native", "Expo", "TypeScript", "Supabase", "PostgreSQL", "Deno", "Vite", "Vercel"]
     },
@@ -114,8 +107,7 @@ export const experience: Experience[] = [
         role: "Full Stack Engineer",
         contract: true,
         points: [
-            "Built Zedbe, an AI finance app, end to end in 4 weeks: Expo/React Native client and Supabase backend with Plaid webhooks streaming transactions over Realtime, RLS and 11 Edge Functions.",
-            "Built a Claude-to-Gemini AI router for spending insights, subscription verdicts and grounded chat, with figures computed in code and narratives cached by data fingerprint."
+            "Delivered Zedbe, an AI personal-finance app, end to end in 4 weeks: live bank transactions through Plaid and AI spending insights with a Claude-to-Gemini fallback."
         ],
         technologies: ["React Native", "Expo", "TypeScript", "Supabase", "PostgreSQL", "Plaid", "Claude API", "Gemini API"]
     },
@@ -127,10 +119,9 @@ export const experience: Experience[] = [
         period: "2023 - 2025",
         type: "Part-time",
         points: [
-            "Joined as an Automation & Web Scraping Engineer and was promoted to Engineering Lead of a 5–10 person team of engineers, designers and QA, leading the move of the CvtoCareer web platform from a monolith to micro-frontends (Next.js, Material UI, Vercel).",
-            "Built and maintained 7+ job-application automation engines submitting about 200 applications per client each week across LinkedIn, Indeed, SEEK and Jobserve (Python, Selenium, Playwright, Puppeteer).",
-            "Added AI question extraction and answering to the application engines, and Gemini-powered resume enhancement to the web app.",
-            "Built scraping pipelines aggregating 50,000+ job postings a week, with async Python workers coordinated through Redis, Flask APIs serving the data, and Docker deployments on DigitalOcean."
+            "Promoted to Engineering Lead of a 5–10 person team of engineers, designers and QA; split the monolithic web platform into client and admin apps that ship independently.",
+            "Built 7+ job-application automation engines (Python, Selenium, Playwright) submitting about 200 applications per client each week across LinkedIn, Indeed and SEEK.",
+            "Built scraping pipelines aggregating 50,000+ job postings a week with Redis-coordinated Python workers and Flask APIs."
         ],
         technologies: ["Python", "TypeScript", "Next.js", "Flask", "Selenium", "Playwright", "Puppeteer", "Redis", "MongoDB", "PostgreSQL", "Docker", "DigitalOcean"]
     },
@@ -142,11 +133,9 @@ export const experience: Experience[] = [
         period: "2023 - 2025",
         type: "Full-time",
         points: [
-            "Led the v2 rebuild of GrowthStack, Zedi's marketing-services platform serving 5+ client businesses (React, TypeScript, Redux Toolkit), moving the client dashboard to a new backend API and rebuilding auth, onboarding, ordering across 15 service types, Flutterwave checkout and in-app review of image, video and PDF deliverables.",
-            "Built GrowthStack's role-based staff portal for superadmins, admins and creative talents, covering task assignment and reassignment, talent submissions uploaded to Cloudinary, and a two-stage admin-then-client approval flow.",
-            "Built the studio-owner side of Scrollz, a Next.js and TypeScript music-industry platform with 5+ studios listed, in a Turborepo monorepo: studio listing and editing, the booking lifecycle (accept or decline, check-in and check-out, reviews and reports) and a bookings analytics dashboard, with TanStack Query, Zustand and Zod.",
-            "Built the Next.js frontend and Strapi CMS (PostgreSQL, Cloudinary) for Arcpenter, an interior design company, with 7 content models so the client can publish projects, services and articles without developer help.",
-            "Built the TruQ logistics website (23 routes, CMS-driven blog, full redesign) and the Zedi AI marketing and demo-booking site solo, and contributed pages to the Zedi Africa and ZedFlo agency websites."
+            "Led the v2 rebuild of GrowthStack, a marketing-services platform serving 5+ client businesses: ordering across 15 service types, Flutterwave checkout and deliverable approval.",
+            "Built the studio-owner side of Scrollz, a Next.js music-industry platform with 5+ studios listed: listings, the full booking lifecycle and an analytics dashboard.",
+            "Shipped client websites for TruQ, Zedi AI and Arcpenter, including a Strapi CMS that lets the client publish content without a developer."
         ],
         technologies: ["React", "Next.js", "TypeScript", "JavaScript", "Redux Toolkit", "TanStack Query", "Zustand", "Tailwind CSS", "Strapi", "Turborepo", "Flutterwave", "Cloudinary"]
     },
@@ -158,8 +147,7 @@ export const experience: Experience[] = [
         period: "2022 - 2023",
         type: "Part-time",
         points: [
-            "Built REST APIs with Django and Flask for client web applications.",
-            "Tuned PostgreSQL queries and schemas for client systems."
+            "Built REST APIs in Django and Flask and tuned PostgreSQL queries and schemas for client web applications."
         ],
         technologies: ["Django", "Flask", "Python", "PostgreSQL", "REST APIs"]
     },
@@ -171,8 +159,7 @@ export const experience: Experience[] = [
         period: "2021 - 2022",
         type: "Full-time",
         points: [
-            "Mentored 50+ students to professional proficiency by designing and delivering a comprehensive Full Stack JavaScript curriculum.",
-            "Built an internal learning management system in React that replaced manual HR processes.",
+            "Mentored 50+ students to professional proficiency with a full-stack JavaScript curriculum I designed, and built a React learning platform that replaced manual HR processes."
         ],
         technologies: ["React.js", "Django", "JavaScript", "Python", "MySQL"]
     }
@@ -221,14 +208,10 @@ export interface SoftSkill {
 }
 
 export const softSkills: SoftSkill[] = [
-    { label: "Technical leadership", detail: "Led a 5–10 person team at CvtoCareer and a team of three at Home Grid (including CareMatch), owning code review and merges (all 112 pull requests on CareMatch)." },
-    { label: "Ownership", detail: "Built products end to end alone, from the database and payments to the app stores, and co-founded HandLancer as CTO." },
-    { label: "Written communication", detail: "Write the specs, decision logs, technical handovers and engineering policies that teams and agents build from." },
-    { label: "Product thinking", detail: "Turn PRDs into phased plans, flag product and pricing decisions, and keep UX simple and honest." },
-    { label: "Remote collaboration", detail: "Shipped for companies in the US, UK, Australia and Nigeria across time zones." },
-    { label: "Security mindset", detail: "Fixed penetration-test findings and default to row-level security, server-held secrets and audited admin access." },
-    { label: "Mentoring", detail: "Taught full-stack JavaScript to 50+ students at The Roothub." },
-    { label: "Adaptability", detail: "Moved across Django, NestJS, Next.js and Expo, and ran framework upgrades in production codebases." },
+    { label: "Technical leadership", detail: "Led teams of 3 to 10 at Home Grid and CvtoCareer, owning code review and delivery." },
+    { label: "End-to-end ownership", detail: "Shipped whole products alone, from database and payments to the app stores." },
+    { label: "Product thinking", detail: "Start from the business outcome, then turn the spec into a phased plan." },
+    { label: "Remote collaboration", detail: "Shipped for companies in the US, UK, Australia and Nigeria." },
 ];
 
 export const education: Education[] = [
