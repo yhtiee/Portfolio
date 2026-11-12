@@ -49,7 +49,7 @@ export const experience: Experience[] = [
         type: "Full-time",
         points: [
             "Built OAuth 2.0 single sign-on shared by four SpurtX products and migrated 35,325 existing users onto it.",
-            "Cut releases from ~30-minute manual deploys to under 5 minutes by moving SpurtX services to Docker and GitHub Actions on AWS (ECR/ECS, EC2).",
+            "Cut releases from ~30-minute manual deploys to under 5 minutes by moving SpurtX services to Docker and GitHub Actions on AWS (ECR, ECS on Fargate, EC2).",
             "Owned the backend of Sync, a project-management product used by 10+ teams across 50+ projects, adding AI task generation, Stripe subscriptions and calendar sync.",
             "Founded Score, the NestJS rebuild of Spurt's PHP invoicing and bookings product, as its only engineer for six months; it now serves 10+ businesses.",
             "Closed penetration-test findings and moved admin APIs in four services behind one central permission system with audit logs and admin 2FA."
@@ -181,7 +181,7 @@ export const skillGroups: SkillGroup[] = [
     { label: "Mobile", items: ["React Native", "Expo", "Expo Router", "EAS Build & Update", "Reanimated", "Push notifications (Expo, FCM)", "Biometric auth", "App Store & Play Store compliance"] },
     { label: "Data", items: ["PostgreSQL", "Supabase (Auth, RLS, Realtime, Storage, Edge Functions)", "MongoDB", "Redis", "MySQL", "Prisma", "TypeORM", "pgvector", "PostGIS", "Database migrations"] },
     { label: "AI & LLMs", items: ["Claude API", "Gemini API", "OpenAI API", "Groq", "Vercel AI SDK", "Multi-provider routing & fallback", "Streaming responses", "Guardrails & grounding checks", "LLM evals", "Embeddings"] },
-    { label: "Cloud & DevOps", items: ["AWS (EC2, ECR/ECS, S3, SES)", "Docker", "GitHub Actions CI/CD", "Vercel", "Netlify", "Render", "Google Cloud Run", "DigitalOcean", "Grafana Loki", "Sentry", "Linux", "Git"] },
+    { label: "Cloud & DevOps", items: ["AWS (EC2, ECR, ECS Fargate, S3, SES)", "Docker", "GitHub Actions CI/CD", "Vercel", "Netlify", "Render", "Google Cloud Run", "DigitalOcean", "Grafana Loki", "Sentry", "Linux", "Git"] },
     { label: "Payments & APIs", items: ["Stripe", "Flutterwave", "Plaid", "Fincra", "Firebase Cloud Messaging", "Google Calendar API", "SendGrid", "Resend", "Twilio", "Cloudinary", "Strapi", "Airtable", "AdMob"] },
     { label: "Testing", items: ["Vitest", "Jest", "Playwright", "pytest", "pgTAP"] },
     { label: "Automation", items: ["Selenium", "Playwright", "Puppeteer", "BeautifulSoup", "XPath", "Web scraping pipelines"] },
@@ -197,7 +197,7 @@ export const resumeSkillGroups: SkillGroup[] = [
     { label: "Backend", items: ["Node.js", "NestJS", "Django", "Flask", "REST APIs", "WebSockets", "OAuth 2.0 / SSO", "Background jobs & queues"] },
     { label: "Frontend & Mobile", items: ["React", "Next.js", "React Native", "Expo", "Tailwind CSS", "TanStack Query", "Redux Toolkit"] },
     { label: "Data", items: ["PostgreSQL", "Supabase", "MongoDB", "Redis", "Prisma", "TypeORM"] },
-    { label: "Cloud & DevOps", items: ["AWS (EC2, ECR/ECS, S3)", "Docker", "GitHub Actions", "Vercel", "Grafana Loki", "Sentry"] },
+    { label: "Cloud & DevOps", items: ["AWS (EC2, ECR, ECS Fargate, S3)", "Docker", "GitHub Actions", "Vercel", "Grafana Loki", "Sentry"] },
     { label: "Payments & AI", items: ["Stripe", "Flutterwave", "Plaid", "Claude API", "Gemini API", "OpenAI API"] },
 ];
 

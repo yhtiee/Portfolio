@@ -892,7 +892,7 @@ export const projects: Project[] = [
             "Ran the move of identity data from the legacy SSO database into core, and built the Fincra wallet module: deposits, cross-currency deposits, payouts, bank accounts, transfer codes and webhook signature checks.",
             "Built the analytics warehouse. Products emit events into a MongoDB store (a second Prisma schema), and scheduled jobs roll them up into active users, churn and churn triggers, cohort retention, time-to-first-value, feature adoption and crossover, NPS and Spark adoption. Rollups re-run automatically when a metric definition changes.",
             "Secured the admin dashboard with role permissions, module management and audit logging across four services. Admins get password reset flows and an emailed one-time code at sign-in: the code is stored hashed in Redis and protected by attempt caps, resend cooldowns and a limit on how many codes can be requested.",
-            "Owned deployment and observability. I wrote the Dockerfiles, the first GitHub Actions pipeline that deploys to EC2, and the ECR/ECS staging pipelines with immutable image tags. I moved secrets out of image layers so they load at runtime, added Grafana Loki logging (batched and queued, with sensitive fields masked) and wrote the company's logging and log management policy.",
+            "Owned deployment and observability. I wrote the Dockerfiles, the first GitHub Actions pipeline that deploys to EC2, and the ECR/ECS staging pipelines on Fargate with immutable image tags. I moved secrets out of image layers so they load at runtime, added Grafana Loki logging (batched and queued, with sensitive fields masked) and wrote the company's logging and log management policy.",
             "Built the shared plumbing in the SpurtX AI service: verification of core-issued JWTs, a CORS allowlist, structured logging with S3 upload, warehouse event emission, Swagger docs and CI/CD. I also built a PostgreSQL response cache that calls the model again only when the data a feature reads has actually changed."
         ],
         challenges: [
@@ -972,7 +972,7 @@ export const projects: Project[] = [
         description: "Sync is a NestJS and PostgreSQL monolith with 427 REST routes across 37 controllers, 60 TypeORM entities and six Socket.IO gateways for real-time messaging. It runs alongside spurtx-core through a second database connection and service-to-service APIs, so users, companies, notifications, calendar events and analytics events are shared across the SpurtX tools. From late 2024 I wrote about 88% of its commits, covering product features, security fixes, logging and CI/CD.",
         myRole: [
             "Built the logging pipeline: correlation-ID request interceptor, masking of sensitive fields, a Bull queue writing per-category log files that rotate at 1 MB and are archived to S3, and a batching Grafana Loki client. Also wrote the company's logging and log-management policy document.",
-            "Replaced SSH git-pull deploys with a GitHub Actions pipeline: OIDC or key-based AWS auth, Docker Buildx with GitHub Actions layer cache, push to ECR with both :latest and an immutable commit-SHA tag, and a forced ECS rollout. Added a /health endpoint for container health checks.",
+            "Replaced SSH git-pull deploys with a GitHub Actions pipeline: OIDC or key-based AWS auth, Docker Buildx with GitHub Actions layer cache, push to ECR with both :latest and an immutable commit-SHA tag, and a forced ECS rollout on Fargate. Added a /health endpoint for container health checks.",
             "Fixed the issues from Sync's penetration test: put guards back on project detail, member, milestone and proposal routes; added per-project authorization to bulk milestone creation; and limited user search to the caller's project network instead of fuzzy-matching the whole user table on email and phone.",
             "Wired Sync's admin routes to the permission matrix owned by spurtx-core: one decorator maps HTTP verbs to permission actions, a global guard refuses any admin route missing the permission check, and an interceptor writes an audit entry for every successful change.",
             "Integrated Sync with spurtx-core: a second TypeORM connection, mirrored users, companies, notifications, calendar events and cross-app prompts, analytics events for the data warehouse, and internal endpoints protected by a shared service token compared in constant time.",
@@ -1057,7 +1057,7 @@ export const projects: Project[] = [
             "Built invoicing end to end: invoice entity and DTOs, client management, send-invoice emails with HTML templates, public invoice preview links gated by client OTP and client codes, tax/discount fields, and revenue analytics endpoints.",
             "Built the first bookings and consultants modules, plus a Google Calendar OAuth flow that stores refresh tokens and creates events with Google Meet links, and public booking endpoints.",
             "Added scheduled jobs for invoice reminders and daily, weekly and monthly recurring invoices, plus a Stripe Checkout and webhook subscription module (later retired when billing moved to the SSO layer).",
-            "Set up the original Dockerfile, docker-compose and Cloud Build pipeline to deploy staging on Google Cloud Run; later wrote the production compose file, a /health endpoint, and a GitHub Actions workflow that pushes SHA-tagged images to Amazon ECR and rolls the ECS service.",
+            "Set up the original Dockerfile, docker-compose and Cloud Build pipeline to deploy staging on Google Cloud Run; later wrote the production compose file, a /health endpoint, and a GitHub Actions workflow that pushes SHA-tagged images to Amazon ECR and rolls the ECS service on Fargate.",
             "Moved admin identity to the shared SSO admin table behind an environment-variable switch, and enforced the spurtx-core permission matrix with a global guard and an audit interceptor that redacts credentials, both covered by Jest specs."
         ],
         challenges: [
@@ -1102,7 +1102,7 @@ export const projects: Project[] = [
             "Google Calendar API",
             "Docker",
             "GitHub Actions",
-            "AWS ECR/ECS",
+            "AWS ECR/ECS (Fargate)",
             "Google Cloud Run",
             "Grafana Loki",
             "Jest"
