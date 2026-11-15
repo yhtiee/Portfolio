@@ -1172,76 +1172,91 @@ export const projects: Project[] = [
     },
     {
         id: "24",
-        status: "Pre-launch",
+        status: "Live",
         companyId: "personal",
         role: "Co-founder & CTO",
         title: "HandLancer",
         team: "Solo engineer",
-        subtitle: "An escrow-protected marketplace for hiring verified artisans in Nigeria, built as an Expo app, a Next.js web app and an admin console on one Supabase backend. I'm the co-founder and CTO and the only engineer, and I designed and built every part of it.",
-        description: "HandLancer connects people who need home services (plumbers, electricians, carpenters, cleaners and more) with vetted local artisans, starting in Uyo, Nigeria. Customers post a job, compare itemized quotes and fund an escrow from an in-app wallet. Money is released in two stages, once for materials and once for workmanship, and only after the customer approves. The product is pre-launch: the marketing site and waitlist are live at handlancer.com, and the mobile and web apps are in testing.",
+        subtitle: "An escrow-protected marketplace for hiring vetted artisans in Nigeria, live in Uyo as an installable web app, with an Expo mobile app and an admin console on the same Supabase backend. I'm the co-founder and CTO and the only engineer, and I designed and built every part of it.",
+        description: "HandLancer connects people who need home services (plumbers, electricians, carpenters, cleaners and more) with vetted local artisans, starting in Uyo, Nigeria. Customers post a job, compare itemized quotes and fund an escrow from an in-app wallet. Money is released in two stages, once for materials and once for workmanship, and only after the customer approves. A person reviews every artisan before they can quote. The marketplace is live as a progressive web app at handlancer.com/app with the full feature set: jobs, quotes, escrow, wallet top-ups and withdrawals, chat, disputes and reviews. The Expo mobile app runs on the same backend, and its store listings are pending.",
         myRole: [
-            "Built the iOS/Android client in Expo (React Native, Expo Router, TypeScript, TanStack Query). It has separate customer and artisan flows covering jobs, quotes, chat, wallet, escrow, disputes, reviews and push notifications.",
-            "Designed the Supabase backend across 22 versioned SQL migrations: row-level security on every table, plus SECURITY DEFINER functions as the only way to move wallet balances, fund escrow, release milestones and resolve disputes.",
-            "Integrated Flutterwave payments through Supabase Edge Functions for wallet top-ups, bank-account resolution and withdrawals, with a signature-checked, re-verified and idempotent webhook.",
-            "Built the Next.js 16 website: an SEO-structured marketing site (a 125-service catalogue, city and guide pages, JSON-LD) with a Supabase waitlist, a browser/PWA version of the marketplace, and an allowlisted admin console for users, artisans, jobs, disputes, transactions and analytics.",
+            "Built the installable web app (PWA) at handlancer.com/app as a full port of the mobile app: 35 screens across the customer and artisan flows, TanStack Query with one Supabase Realtime channel that keeps every screen current, a service worker with an offline fallback, and an install prompt for Android and iOS.",
+            "Built the iOS/Android client in Expo (React Native, Expo Router, TypeScript, TanStack Query), with separate customer and artisan flows covering jobs, quotes, chat, wallet, escrow, disputes, reviews and push notifications.",
+            "Designed the Supabase backend across 25 versioned SQL migrations: row-level security on every table, plus SECURITY DEFINER functions as the only way to move wallet balances, fund escrow, release milestones, resolve disputes and pay out.",
+            "Integrated Flutterwave through Supabase Edge Functions for wallet top-ups, bank-account resolution and automatic withdrawals. A Postgres trigger hands each PIN-checked withdrawal to a payout function, fees are shown before anyone pays, and the admin console can retry or settle a payout by hand.",
+            "Built artisan vetting: a multi-step application with work photos, an admin review queue (approve, request changes, suspend), and up to three reminder emails for artisans who never finish applying. Approved artisans get a public profile page with a generated share image.",
+            "Built transactional email on Resend: a Supabase Auth email hook plus 30+ product emails fired from Postgres triggers through pg_net, with per-user preferences, throttling and a delivery log.",
+            "Built the Next.js 16 website: an SEO-structured marketing site (a 125-service catalogue, city and guide pages, JSON-LD) and an allowlisted admin console for users, artisan applications, jobs, disputes, transactions, withdrawals, waitlist invitations and analytics.",
             "Directed AI coding agents (Claude Code, Google Antigravity) as the sole developer. Before feature work I had the agent document the existing design system, then shipped work as small reviewed PRs, for example a phased SEO rollout, with Claude co-authorship recorded on 20 commits."
         ],
         challenges: [
             {
                 title: "Money that clients can't touch",
-                problem: "A wallet-and-escrow marketplace can't let a mobile client write balances, and payouts need to be split between materials and labor.",
+                problem: "A wallet-and-escrow marketplace can't let a client write balances, and payouts need to be split between materials and labor.",
                 approach: "Wallets and transactions have no client write policies at all. Every balance change goes through SECURITY DEFINER Postgres functions that lock rows (SELECT ... FOR UPDATE), check who the caller is and what state the job is in, and write a ledger entry. Escrow releases a materials portion and a workmanship portion as separate milestones, and a dispute freezes release."
             },
             {
-                title: "Trustworthy payment webhooks",
-                problem: "Flutterwave sends three different webhook payload shapes depending on the account, and only matching one of them silently dropped real top-ups.",
-                approach: "The Edge Function normalizes all three shapes, checks the verif-hash, then re-verifies the charge against Flutterwave's API before crediting. Credits are idempotent on tx_ref, so a retried webhook never double-credits."
+                title: "Paying out without losing money",
+                problem: "Withdrawals had been settled by hand. Automating them meant deciding what to do when Flutterwave refuses a transfer, or doesn't answer at all.",
+                approach: "The wallet is debited when the withdrawal is requested, and a trigger posts it to a payout Edge Function after commit, so installed mobile apps got payouts without an update. The function claims the row, asks Flutterwave for the fee, and records sending, submitted, not sent or unknown. Money goes back to the wallet only when Flutterwave confirms the transfer never left. A timeout is marked unknown and goes to a person, because it proves nothing."
             },
             {
-                title: "Brute-force-resistant transfer PIN",
-                problem: "Releasing escrow and withdrawing funds needed a second factor on top of the session.",
-                approach: "The transfer PIN is bcrypt-hashed with pgcrypto and checked inside the release and withdrawal functions. Failed attempts are counted server-side, and the account locks for 15 minutes once the limit is reached."
+                title: "A PIN lockout that never locked",
+                problem: "An audit of the transfer PIN found three holes. A wrong PIN raised an exception that rolled back its own attempt counter, so the lockout never triggered. A null PIN passed the check. And the change-PIN screen allowed unlimited guesses.",
+                approach: "A refused PIN now returns instead of raising, so the counter commits, and the response still sets HTTP 400, so app builds already installed behave the same. Null is rejected, PIN changes count as attempts, and weak PINs like 1111 or 1234 are refused. A forgotten PIN is reset only with the session, a 15-minute code sent to the confirmed email, and the account password."
             },
             {
-                title: "Push notifications that silently failed",
-                problem: "Notification rows were being saved and badges updated, but nothing reached the device, and nothing looked broken.",
-                approach: "I traced it to missing Android FCM registration and fixed it. Push is now fanned out from Postgres triggers through a send-push Edge Function, with an in-app diagnostic that reports which link in the delivery chain is broken."
+                title: "Top-ups that couldn't credit twice",
+                problem: "Flutterwave sends three different webhook payload shapes, and only matching one of them silently dropped real top-ups. The crediting function also read the balance, added to it and wrote it back, so two deliveries at once could both credit.",
+                approach: "The Edge Function normalizes all three shapes, checks the verif-hash and re-verifies the charge with Flutterwave's API. The credit now inserts the ledger row first, against a unique reference, and only the delivery that wins that insert updates the wallet."
             },
             {
-                title: "Admin access separate from app accounts",
-                problem: "The admin console shares a Supabase project with the consumer app, so a valid app login must not grant admin access.",
-                approach: "A Next.js proxy keeps sessions fresh. Every admin page and Server Action calls requireAdmin(), which verifies the JWT and checks an admin_users allowlist on each request, so removing a row revokes access immediately."
+                title: "A full app in the browser that stays honest about money",
+                problem: "Customers and artisans on low-end phones needed the whole marketplace without an install from a store, but an offline cache must never show a stale balance or let a payment be attempted offline.",
+                approach: "The service worker caches only static assets, photos and page shells under /app, and never touches Supabase, so balances, jobs and payments are always live. Money actions disable themselves offline behind a banner, and iPhone HEIC photos are detected from their bytes and converted in the browser, because Chrome can't display them."
+            },
+            {
+                title: "Shareable profiles without opening the table",
+                problem: "Artisans wanted a link they could share on WhatsApp, but profiles are readable only by signed-in users, and opening the table to anonymous visitors would expose every column of every row.",
+                approach: "One SECURITY DEFINER function returns a single approved artisan with named fields only. Phone, email, exact location and review text are left out, so work is still arranged through escrow. The page renders a share image from the artisan's photo, correcting the JPEG orientation first."
             }
         ],
+        impact: [
+            "First job completed on the platform, worth over ₦40,000",
+            "9 artisans vetted and approved, and 2 customers onboarded"
+        ],
         tags: [
+            "Next.js",
+            "React",
+            "PWA",
             "React Native",
             "Expo",
             "TypeScript",
-            "Next.js",
-            "React",
             "Supabase",
             "PostgreSQL",
             "Row-Level Security",
             "Edge Functions",
             "Flutterwave",
+            "Resend",
             "TanStack Query",
             "Tailwind CSS",
-            "Push Notifications",
             "AI-assisted development"
         ],
         features: [
-            "Customer and artisan roles with separate tab flows",
+            "Installable web app (PWA) with an offline fallback and an install prompt",
+            "Customer and artisan roles with separate flows",
             "Job posting, itemized quotes and hiring",
-            "In-app wallet funded through Flutterwave",
+            "In-app wallet funded through Flutterwave, with fees shown before paying",
             "Two-stage escrow: materials, then workmanship",
-            "PIN-gated escrow release and withdrawals",
+            "Automatic Flutterwave withdrawals, with admin retry and manual settlement",
+            "Transfer PIN with server-side lockout and an email-verified reset",
             "Disputes with admin refund or release",
             "Realtime chat (one thread per customer–artisan pair)",
-            "Push notifications fanned out from Postgres triggers",
-            "Ratings and reviews with recalculated provider scores",
-            "Artisan onboarding with admin approval before quoting",
-            "Browser/PWA version of the marketplace",
-            "Admin analytics with PowerPoint/Excel/image export"
+            "Artisan applications reviewed by a person, with reminder emails",
+            "Public artisan profiles with generated share images",
+            "30+ transactional emails with per-user preferences",
+            "Push notifications on mobile, fanned out from Postgres triggers",
+            "Admin console with waitlist invitations and analytics export to PowerPoint, Excel and images"
         ],
         image: "/handlancer.png",
         demoUrl: "https://www.handlancer.com",
@@ -1410,36 +1425,47 @@ export const projects: Project[] = [
         role: "Creator",
         title: "Ifiok",
         team: "Solo build (AI-assisted)",
-        subtitle: "Ifiok is an AI learning app that turns Nigerian university students' own courses into interactive, verified lessons. I wrote the spec, then designed and built it end to end with AI coding agents.",
-        description: "Ifiok (\"the AI learning agent\") is a student-led learning platform for Nigerian university students: students create their own courses and outlines, topics resolve to shared concepts, and the AI writes lessons as data in a fixed block language that the app's own components render. Every number a student sees is computed by mathjs, not the model, and lessons only go live after automated checks. It is live as an early MVP on Next.js and Supabase.",
+        subtitle: "An AI learning agent for Nigerian university students. It turns their own courses and notes into interactive, verified lessons, practice, exam prep and virtual labs, and pays students through PayPal when what they share or teach helps someone else. Built for the PayPal AI Hackathon: I wrote the spec, then designed and built it end to end with AI coding agents.",
+        description: "Ifiok (\"the AI learning agent\") gives each student an agent built on their own course. Students add a course and its outline, topics resolve to shared concepts, and the AI writes lessons as data in a fixed block language that the app's own components render, grounded in the student's uploaded notes with page citations. Every number a student sees is computed by an engine, not the model. Around the lessons are server-marked practice with weak areas, exam prep from past questions, and virtual labs. Students earn when their shared notes, explainers or tutoring help others: a monthly pool paid through PayPal Payouts, and peer tutoring that PayPal holds until the session happens. An AI tutoring agent drafts bookings inside a spending limit the student sets. It is live on Next.js and Supabase, with all payments in the PayPal sandbox in US dollars for the hackathon; real payouts move to a Nigerian provider in naira afterwards, because PayPal accounts in Nigeria can't receive money.",
         myRole: [
-            "Wrote a 13-part product and engineering spec before any code (product, features, architecture, data model, AI, lesson engine, economy, brand, security, cost, build plan, testing, review log), with its schema and RLS rules checked in PostgreSQL first.",
-            "Drove Claude Code and Google Antigravity from that spec through a ticketed build plan: a CLAUDE.md with 14 hard guardrails, one ticket per session with tests and \"Done when\" checks, `pnpm check` as the gate, and spec changes recorded as numbered decisions in a review log.",
-            "Designed a provider-agnostic AI gateway (policy, kill switch, caps, atomic quota reservation, routing with retry and fallback across Groq, Gemini and Anthropic, JSON validation with one repair pass, cost logging, refund on failure), with model IDs kept in database config rather than code.",
-            "Built the lesson pipeline: a zod-validated Lesson DSL with 14 block types, a verifier that checks schema, size, maths equivalence, KaTeX, plots and source references, a claim check for non-STEM lessons, and publish-or-review versioning.",
-            "Built a Postgres-native job system: pgmq queues, a Deno Edge Function worker started by pg_net and swept by pg_cron, with retries, visibility timeouts and Realtime job status.",
-            "Locked down the data layer with 22 migrations, RLS on every table and pgTAP tests (run in PGlite locally and Docker in CI), plus age-gated onboarding, consent and personal-data redaction before free-tier model calls."
+            "Wrote a 13-part product and engineering spec before any code (product, features, architecture, data model, AI, lesson and lab engine, economy, brand, security, cost, build plan, testing, review log), with its schema and RLS rules checked in PostgreSQL first, and kept 60+ numbered decisions in the review log as the build changed it.",
+            "Drove Claude Code and Google Antigravity from that spec through a ticketed build plan: a CLAUDE.md with hard guardrails, one ticket per session with tests and \"Done when\" checks, and `pnpm check` (types, lint, unit and database tests, formatting) as the gate.",
+            "Designed a provider-agnostic AI gateway (policy, kill switch, caps, atomic quota reservation, routing with retry and fallback across Groq, Gemini and Anthropic, JSON validation with one repair pass, cost logging, refund on failure) behind 13 typed AI skills, with model IDs kept in database config rather than code.",
+            "Built the learning loop: a zod-validated Lesson DSL with 14 block types and a verifier (maths equivalence, KaTeX, plots, source references); uploads of notes, textbooks and past questions (PDF and Word read on the phone, scans read by Gemini) that ground lessons with page citations; server-marked practice with weak areas; exam prep that turns past questions into a study plan, worked solutions and a timed paper; and virtual labs on a seeded experiment engine.",
+            "Integrated PayPal on the server only: Orders v2 authorise, then capture or void for tutoring, Payouts for the monthly contributor pool and tutors' shares, and webhooks whose signature is verified on the raw body before the item is re-fetched from PayPal. Every money state change is an idempotent SQL function.",
+            "Built the tutoring agent and the contributor side: AI checks on shared notes for copyright signs, personal details and duplicates, reviewed written, voice and video explainers with Whisper captions, usage points, and a separate admin interface with AG Grid tables for payouts and tutoring disputes.",
+            "Locked down the data layer with 44 migrations, RLS on every table and 17 pgTAP suites (run in PGlite locally and Docker in CI), plus 13 Playwright end-to-end specs against the real AI and PayPal sandbox."
         ],
         challenges: [
             {
                 title: "Keeping AI-written lessons safe and correct",
                 problem: "LLM output can contain wrong maths, invented claims or unsafe markup, and students would see it.",
-                approach: "The model returns Lesson DSL JSON only, which is validated by zod and a verifier (mathjs equivalence, KaTeX pre-render, plot evaluation, source-ref checks). Failing or sensitive lessons go to review instead of publishing, and AI-generated HTML or JS is never rendered."
+                approach: "The model returns Lesson DSL JSON only, which is validated by zod and a verifier (mathjs equivalence, KaTeX pre-render, plot evaluation, source-ref checks). Failing or sensitive lessons go to review instead of publishing, practice questions whose stated answer disagrees with the engine are dropped, and AI-generated HTML or JS is never rendered."
             },
             {
-                title: "Running a pilot on free-tier model limits",
-                problem: "Groq's free models allow about 1,000 requests a day and 8,000 tokens a minute, and long generations often hit 429s or got truncated.",
-                approach: "Config-driven routing (the large gpt-oss model for lesson generation, the small one for frequent calls, Gemini for image skills), an immediate switch to the fallback provider on 429, repairs sent to whichever provider is up, and quota reserved before each call and refunded on failure."
+                title: "An agent that can spend money, but only with permission",
+                problem: "The tutoring agent picks a topic, a tutor and a time and drafts a paid booking. A model could invent a tutor, ignore the student's budget or quote numbers that don't exist.",
+                approach: "The server first filters tutors to the student's own spending limit and passes them to the model as reference codes (W1, T1), never names or IDs. It then checks every reference, the time and every number in the agent's reason, and falls back to plain rules if anything fails. The draft is stored with a database check that keeps it within the limit, and only the student's approval on PayPal creates the payment hold."
+            },
+            {
+                title: "Money that never moves twice",
+                problem: "PayPal webhooks can be replayed or arrive out of order, and a retried request after a network failure could capture a payment or send a payout twice.",
+                approach: "Each booking is one state machine in a single idempotent SQL function, handled webhook IDs are stored, and every money-moving POST carries a PayPal-Request-Id, so the client can safely retry network failures. Tests replay webhooks three times. The monthly pool split runs in SQL with database checks that lines never exceed the pool and no one gets more than 20%."
+            },
+            {
+                title: "PayPal that can't pay Nigeria",
+                problem: "Testing showed that PayPal accounts in Nigeria can send money but not receive it, and the sandbox doesn't hold naira, while the product's real prices are in naira.",
+                approach: "Sandbox money is US dollars in integer cents, in its own sandbox tables, and is never converted or mixed with naira. Payments sit behind one provider interface (pay out, hold, capture, void), so after the hackathon a Nigerian provider can replace PayPal in kobo while the pool split, booking state machine and screens stay the same."
             },
             {
                 title: "Long AI jobs without extra infrastructure",
                 problem: "Lesson generation takes too long for a request handler, and the cost plan ruled out a separate queue service.",
-                approach: "pgmq queues inside Supabase, a worker Edge Function triggered by pg_net and a one-minute pg_cron sweep, idempotent enqueue_job_once, and attempt and visibility limits. The client follows progress over Realtime."
+                approach: "pgmq queues inside Supabase, a worker Edge Function triggered by pg_net and a one-minute pg_cron sweep, idempotent enqueue_job_once, and attempt and visibility limits. The client follows progress over Realtime, and the same worker releases unconfirmed tutoring holds 24 hours after a session."
             },
             {
-                title: "Sharing code between Next.js and Deno",
-                problem: "The gateway, prompts, verifier and job handlers have to run both in the Next.js server and in Supabase Edge Functions.",
-                approach: "A pure-TypeScript @ifiok/core workspace package, synced into the functions folder by a script, with `pnpm check` failing if the copies drift."
+                title: "Running on free-tier model limits",
+                problem: "Groq's free models allow about 1,000 requests a day and 8,000 tokens a minute, and long generations often hit 429s or got truncated.",
+                approach: "Config-driven routing (the large gpt-oss model for lessons and the tutoring agent, the small one for frequent calls, Gemini for images), an immediate switch to the fallback provider on 429, and quota reserved before each call and refunded on failure."
             }
         ],
         tags: [
@@ -1449,26 +1475,32 @@ export const projects: Project[] = [
             "PostgreSQL",
             "pgvector",
             "pgmq",
+            "PayPal API",
             "Groq",
             "Gemini",
             "Anthropic Claude",
             "Zod",
             "TanStack Query",
-            "Tailwind CSS",
+            "AG Grid",
+            "Playwright",
             "mathjs",
             "AI-assisted development"
         ],
         features: [
             "Student-created courses, with outlines drafted by AI or extracted from a photo or PDF",
-            "Topics resolved to shared concepts through embeddings (gte-small, pgvector)",
-            "Interactive lessons: plots with sliders, steppers, checkpoints (order and match), diagrams, flashcards",
-            "Maths pre-rendered with KaTeX when a lesson is saved; numbers computed by mathjs",
-            "Lesson verification gate and claim check before publishing",
-            "Background lesson generation with live job status",
+            "Interactive lessons: plots with sliders, steppers, checkpoints, diagrams, flashcards",
+            "Lessons grounded in the student's own notes and textbooks, with page citations",
+            "Server-marked practice with weak areas, evidence and the most common mistake",
+            "Exam prep: past questions tagged by topic, a study plan to the exam date, worked solutions and a timed paper",
+            "Virtual labs on a seeded experiment engine with least-squares fits and a printable report",
+            "Shared notes and written, voice or video explainers, checked by AI and reviewed",
+            "Monthly contributor pool split by usage points (20% cap), paid with PayPal Payouts",
+            "Peer tutoring: PayPal authorises at booking, captures after the session, voids on a no-show",
+            "AI tutoring agent that drafts bookings within the student's spending limit",
+            "AI explanations of each payout that keep only numbers from the ledger",
+            "Admin interface with AG Grid tables for payouts and tutoring disputes",
             "Multi-provider AI gateway with quotas, kill switch and cost tracking",
-            "Email and password auth, 18+ age gate, consent and onboarding flow",
-            "RLS on every table, tested with pgTAP",
-            "Mobile-first, accessible UI (jsx-a11y lint) and an SEO landing page with JSON-LD"
+            "RLS on every table, tested with pgTAP; Playwright end-to-end tests"
         ],
         image: "/ifiok.png",
         demoUrl: "https://ifiok-ai-agent.vercel.app/",
